@@ -1,0 +1,426 @@
+<template>
+    <div>
+        <el-form ref="form" :model="form" inline class="pt15 pl20" label-width="100px">
+            <el-form-item label="姓名11111">
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="工号">
+                <el-input v-model="form.password"></el-input>
+            </el-form-item>
+            <el-form-item label="所在公司">
+                <el-input v-model="form.company"></el-input>
+            </el-form-item>
+            <el-form-item label="岗位名称">
+                <el-input v-model="form.job"></el-input>
+            </el-form-item>
+            <el-form-item label="签到类型">
+                <el-select v-model="form.region1" placeholder="请选择">
+                    <el-option label="迟到" value="late"></el-option>
+                    <el-option label="正常" value="normal"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="状态">
+                <el-select v-model="form.region2" placeholder="请选择">
+                    <el-option label="已签到" value="notsignin"></el-option>
+                    <el-option label="未签到" value="signined"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="签到时间">
+                <el-col :span="11">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+                </el-col>
+                <el-col class="line center" :span="1">-</el-col>
+                <el-col :span="11">
+                    <!-- <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker> -->
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date2" style="width: 100%;"></el-date-picker>
+                </el-col>
+            </el-form-item>
+            
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+                <el-button @click="resetForm('form')">重置</el-button>
+            </el-form-item>
+        </el-form>
+        <div class="button">
+            <el-button type="primary" size="medium" @click="chartsShow()">签到统计</el-button>
+            <el-button type="primary" size="medium">批量导出Excel</el-button>
+        </div>
+        <div class="p10">
+            <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+                <el-table-column
+                    prop="id"
+                    label="序号"
+                    width="60"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="姓名"
+                    width="270"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="number"
+                    label="工号"
+                    width="110"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="company"
+                    label="所属公司"
+                    width="180"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="job"
+                    label="岗位名称"
+                    width="160"
+                    >
+                </el-table-column>                
+                <el-table-column
+                    prop="date"
+                    label="签到时间"
+                    width="110">
+                </el-table-column>
+                <el-table-column
+                    prop="operation"
+                    label="操作">
+                    <template slot-scope="scope">
+                        <el-button @click="handleClick(scope.row.id)" type="primary" size="mini">查看详情</el-button>                      
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[5,10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="tableData.length" style="margin:15px auto;text-align: center">
+            </el-pagination>
+        </div>
+        <div class="popUp" ref="popUp">
+            <div class="popUpcontent">
+                <el-button class='close' @click="close()">×</el-button>
+                <div class="contentbox">
+                    <h2>查看报名结果详情</h2>
+                    <ul class="content">
+                        <li>
+                            <label>姓名:</label><span></span>
+                        </li>
+                        <li>
+                            <label>员工编号:</label><span></span>
+                        </li>
+                        <li>
+                            <label>性别:</label><span></span>
+                        </li>
+                        <li>
+                            <label>民族:</label><span></span>
+                        </li>
+                        <li>
+                            <label>所属公司:</label><span></span>
+                        </li>
+                        <li>
+                            <label>所属部门:</label><span></span>
+                        </li>
+                        <li>
+                            <label>岗位名称:</label><span></span>
+                        </li>
+                        <li>
+                            <label>岗位年限:</label><span></span>
+                        </li>
+                        <li>
+                            <label>联系方式:</label><span></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contentbox" style="margin-top:10px;">                   
+                    <h2>签到明细</h2>
+                    <ul class="content" style="margin-top:10px;">
+                        <el-table :data="signinData" style="width: 100%">
+                            <el-table-column
+                                prop="date"
+                                label="签到日期"
+                                width="232"
+                                >
+                            </el-table-column>
+                            <el-table-column
+                                prop="type"
+                                label="签到类型"
+                                width="233"
+                                >
+                            </el-table-column>
+                            <el-table-column
+                                prop="time"
+                                label="正常签到时间"
+                                width="233"
+                                >
+                            </el-table-column>                           
+                        </el-table>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="deck">
+            <div class="popUpcontent">
+                <el-button class='close' @click="close()">×</el-button>
+                <div id="myCharts">
+
+                </div>
+            </div>           
+        </div>
+    </div>
+</template>    
+<style>
+    .el-input{
+        width:200px;
+    }
+    .popUp,.deck{
+        width:100%;
+        height: 100%;
+        background: rgba(0,0, 0, 0.5);
+        position: fixed;
+        left: 0;
+        top:0;
+        z-index: 2;
+        display: none;
+    }
+    
+    .popUpcontent{
+        width:700px;
+        background: #fff;
+        height: auto;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        padding:10px;
+    }
+    .contentbox{
+        width:100%;
+    }
+    .contentbox h2{
+        font-size: 16px;
+        border-bottom: 1px solid #ececec;
+        padding-bottom: 5px;
+    }
+    .content{
+        overflow: hidden;
+    }
+    .content li{
+        width: 50%;
+        float:left;
+        box-sizing: border-box;
+        line-height: 30px;
+    }
+    .content label{
+        width: 35%;
+        float: left;
+        text-align: right;
+    }
+    .content span{
+        width: 65%;
+        float: left;
+        text-align: left;
+    }
+    .close{
+        border: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 24px;
+        background: none;
+        z-index: 999;
+    }
+    #myCharts{
+        height: 200px;
+        width:700px;
+    }
+</style>
+<script>
+import $ from 'jquery'
+import echarts from 'echarts'
+
+    export default {
+    data() {
+      return {
+        form: {
+          name: '',
+          password:'',
+          company:'',
+          job:'',
+          region1:'',
+          region2:'',
+          date1: '',
+          date2: ''
+        },
+        currentPage: 1,
+        pageSize: 10,
+        signinData:[
+            {
+                id: '1',
+                date: '2017-08-15 11:42:44',
+                type: '迟到',
+                time: '09:00~09:90'
+            },
+            {
+                id: '2',
+                date: '2017-08-15 11:42:44',
+                type: '正常',
+                time: '13:00~13:90'
+            },
+        ],
+        tableData:[
+            {
+                id: '1',
+                name: '测试条件2',
+                number: '1',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            },
+            {
+                id: '2',
+                name: '新疆移动Office 办公操作实务培训测',
+                number: '0',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            },
+            {
+                id: '3',
+                name: '测试测试',
+                number: '25',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            },
+            {
+                id: '4',
+                name: '测试测试',
+                number: '25',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            },
+            {
+                id: '5',
+                name: '测试测试',
+                number: '25',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            },
+            {
+                id: '6',
+                name: '测试测试',
+                number: '25',
+                company: '黑龙江移动公司',
+                date: '2017-08-15 11:42:44',
+                job: '客户经理',
+                operation: ''
+            }
+        ],
+        gridData: [{
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }, {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        }]
+      }
+    },
+    mounted:function(){
+        this.drawPie();
+    },
+    methods: {
+      onSubmit() {
+        console.log('submit!');
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      handleSizeChange: function (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange: function (currentPage) {
+        this.currentPage = currentPage
+      },
+      handleClick:function(id){
+        $(".popUp").show();
+      },
+      close:function(){
+          $(".popUp").hide();
+          $(".deck").hide();
+      },
+      chartsShow:function(){
+          $(".deck").show();
+      },
+      drawPie:function(){
+          var myChart=echarts.init(document.getElementById('myCharts'));
+          var option={
+               tooltip:{
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data:['签到人数','迟到人数']
+                },
+                color:["#B5C334","#C1232B"],
+                series: [
+                    {
+                        name:'签到统计',
+                        type:'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:[
+                            {value:105, name:'签到人数'},
+                            {value:10, name:'迟到人数'}
+                        ]
+                    }
+                ]
+          }
+          myChart.setOption(option);
+      }
+    }
+  }
+</script>

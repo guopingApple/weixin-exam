@@ -1,0 +1,139 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import store from '../store/'
+import Hello from '@/components/Hello'
+import axios from 'axios'
+
+
+Vue.use(VueRouter)
+
+const router = new VueRouter({
+  routes: [
+    {path:'/signinList', component:require('../pages/signin/list.vue'), meta:{title:'在线签到'}},
+    // {path: '/login', component:require('../pages/login.vue'), meta: {title:'登录'}},
+    // {path: '', redirect: '/hello' },
+    // {path: '/', redirect: '/hello'},
+    // {path:'/main', component:require('../pages/main.vue'), redirect: '/hello', meta: {title:'首页'},
+    //   children: [
+    //     {path:'hello', alias:'/hello', component:require('../pages/hello.vue'), meta:{title:'欢迎',index:0}},
+    //     {path:'operate', alias:'/operate', component:require('../pages/operate.vue'), meta:{title:'运营数据',index:1}},
+    //     {path:'example', alias:'/example', component:require('../pages/example.vue'), meta:{title:'示例页面',index:1}},
+    //     {path:'userList', alias:'/userList', component:require('../pages/userList.vue'), meta:{title:'用户管理',index:2}},
+    //     {path:'userEdit', alias:'/userEdit', component:require('../pages/userEdit.vue'), meta:{title:'修改用户',index:2}},
+    //     {path:'userAdd', alias:'/userAdd', component:require('../pages/userAdd.vue'), meta:{title:'新增用户',index:2}},
+    //     {path:'userPw', alias:'/userPw', component:require('../pages/userPw.vue'), meta:{title:'修改密码',index:2}},
+    //     {path:'roleList', alias:'/roleList', component:require('../pages/roleList.vue'), meta:{title:'角色管理',index:3}},
+    //     {path:'roleEdit', alias:'/roleEdit', component:require('../pages/roleEdit.vue'), meta:{title:'修改角色',index:3}},
+    //     {path:'roleAdd', alias:'/roleAdd', component:require('../pages/roleAdd.vue'), meta:{title:'新增角色',index:3}},
+
+
+    //     {path:'cntPaltformVV', alias:'/cntPaltformVV', component:require('../pages/report/cntPaltformVV.vue'), meta:{title:'排行榜',index:4}},
+    //     {path:'cntZhiruyi', alias:'/cntZhiruyi', component:require('../pages/report/cntZhiruyi.vue'), meta:{title:'植入易',index:4}},
+    //     {path:'cntVideoyi', alias:'/cntVideoyi', component:require('../pages/report/cntVideoyi.vue'), meta:{title:'video易',index:4}},
+
+
+    //     {path:'ivviAdAdd', alias:'/ivviAdAdd', component:require('../pages/ivvi/ivviAdAdd.vue'), meta:{title:'新增ivvi物料',index:4}},
+    //     {path:'ivviAdEdit', alias:'/ivviAdEdit', component:require('../pages/ivvi/ivviAdEdit.vue'), meta:{title:'修改ivvi物料',index:4}},
+    //     {path:'ivviAdList', alias:'/ivviAdList', component:require('../pages/ivvi/ivviAdList.vue'), meta:{title:'ivvi物料列表',index:4}},
+
+    //     {path:'ivviPlanAdd', alias:'/ivviPlanAdd', component:require('../pages/ivvi/ivviPlanAdd.vue'), meta:{title:'新增ivvi计划',index:4}},
+    //     {path:'ivviPlanEdit', alias:'/ivviPlanEdit', component:require('../pages/ivvi/ivviPlanEdit.vue'), meta:{title:'修改ivvi计划',index:4}},
+    //     {path:'ivviPlanList', alias:'/ivviPlanList', component:require('../pages/ivvi/ivviPlanList.vue'), meta:{title:'ivvi计划列表',index:4}},
+
+
+    //     {path:'rolePermission', alias:'/rolePermission', component:require('../pages/rolePermission.vue'), meta:{title:'授权',index:2}},
+
+    //     // Apple demo
+
+    //     {path:'add', alias:'/add', component:require('../pages/test/add.vue'), meta:{title:'新增',index:4}},
+    //     {path:'edit', alias:'/edit', component:require('../pages/test/edit.vue'), meta:{title:'编辑',index:4}},
+    //     {path:'list', alias:'/list', component:require('../pages/test/list.vue'), meta:{title:'测试',index:4}},
+
+    //     {path:'examList', alias:'/examList', component:require('../pages/exam/list.vue'), meta:{title:'试卷列表',index:4}},
+    //     {path:'examAdd', alias:'/examAdd', component:require('../pages/exam/add.vue'), meta:{title:'新增考卷',index:4}},
+    //     {path:'examView', alias:'/examView', component:require('../pages/exam/view.vue'), meta:{title:'查看考卷',index:4}},
+
+        
+    //     {path:'enrolList', alias:'/enrolList', component:require('../pages/enrol/list.vue'), meta:{title:'在线报名',index:4}},
+    //     {path:'surveyList', alias:'/surveyList', component:require('../pages/survey/list.vue'), meta:{title:'在线调研',index:4}},
+    //     {path:'companyManage', alias:'/companyManage', component:require('../pages/companyManage/list.vue'), meta:{title:'公司管理',index:4}},
+    //     {path:'systemManage', alias:'/systemManage', component:require('../pages/systemManage/list.vue'), meta:{title:'系统管理',index:4}}
+        
+    //     // end
+    //   ]
+
+    // }
+  ]
+});
+
+// http request 拦截器
+//axios.interceptors.request.use(
+//  config => {
+//    if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+//      config.headers.Authorization = `token ${store.state.token}`;
+//    }
+//    return config;
+//  },
+//  err => {
+//    return Promise.reject(err);
+//  });
+
+
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          // 返回 401 清除token信息并跳转到登录页面
+          //store.commit(types.LOGOUT);
+
+
+          router.replace({
+            path: 'login',
+            query: {redirect: router.currentRoute.fullPath}
+          })
+          //console.log("401 lelele");
+         // window.location.href = 'https://testcas.zhiruyi.cn:8443/cas/login?service=http://localhost:8080/shiro-cas'
+      }
+    }
+     return Promise.reject(error.response.data)   // 返回接口返回的错误信息
+  });
+/*router.beforeEach((to, from, next)=>{
+
+  //var userJson = sessionStorage.user;
+  //debugger;
+//重新转换为对象
+//  try {
+//   // var currentUser = JSON.parse(userJson);
+//  }catch (e){
+//    console.log(e);
+//  }
+
+  if(router.app.$store.state.user.name){
+    document.title = to.meta.title
+    next()
+  }else if(sessionStorage.user){
+    document.title = to.meta.title
+    next()
+  }
+  else {
+    console.log("redirect login")
+    if (to.path !== '/login') {
+      next('/login')
+    }else{
+      next()
+    }
+  }
+})*/
+// 路由全局钩子
+router.beforeEach((to, from, next)=>{
+  router.app.$store.commit('setPageInf',{title:to.meta.title});
+  //document.title = to.meta.title
+  next()
+})
+
+
+export default router;

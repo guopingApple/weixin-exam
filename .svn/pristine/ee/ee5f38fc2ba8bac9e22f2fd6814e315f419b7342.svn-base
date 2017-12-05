@@ -1,0 +1,247 @@
+<template>
+    <div class="p15">
+        <el-tabs type="border-card">
+            <el-tab-pane label="基本信息">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="pt20" style="width:600px">
+                    <el-form-item label="试卷名称" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入试卷名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="提示信息">
+                        <el-input type="textarea" v-model="ruleForm.desc" placeholder="输入本次考试要点信息"></el-input>
+                    </el-form-item>
+                    <el-form-item align="right">
+                        <el-button type="primary" @click="">下一步</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="试卷题目">
+                <!-- 右侧固定menu -->
+                <el-menu class="el-menu-demo el-menu-fixed" mode="vertical">
+                    <el-menu-item index="1">添加单选题</el-menu-item>
+                    <el-menu-item index="2">添加多选题</el-menu-item>
+                    <el-menu-item index="3">添加判断题</el-menu-item>
+                    <el-menu-item index="4">添加填空题</el-menu-item>
+                    <el-menu-item index="5">添加简答题</el-menu-item>
+                </el-menu>
+                <el-form :model="ruleFormSecond" :rules="rulesSecond" ref="ruleFormSecond" label-width="100px" class="pt20" style="width:660px;">
+                    <!-- 单选题 -->
+                    <div class="Single">
+                        <el-form-item label="Q1" prop="name">
+                            <el-input v-model="ruleFormSecond.name" placeholder="请输入单选题目..." class="fl" style="width:50%;"></el-input>
+                            <el-input v-model="ruleFormSecond.score" placeholder="分值"  style="width:75px;margin:0 10px;"></el-input>
+                            <el-checkbox label="必答题" name="type"></el-checkbox>
+                            <el-checkbox label="选项随机" name="type"></el-checkbox>
+                        </el-form-item>
+                        <div class="Single-answer">
+                            <el-form-item label="A" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-radio label="设为答案"></el-radio>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                            <el-form-item label="B" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-radio label="设为答案"></el-radio>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                            <el-form-item label="C" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-radio label="设为答案"></el-radio>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                             <el-form-item label="">
+                                <el-button type="primary" plain>+添加选项</el-button>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <!-- 多选题 -->
+                    <div class="Multiple pt20">
+                        <el-form-item label="Q2" prop="name">
+                            <el-input v-model="ruleFormSecond.name" placeholder="请输入多选题目..." class="fl" style="width:50%;"></el-input>
+                            <el-input v-model="ruleFormSecond.score" placeholder="分值"  style="width:75px;margin:0 10px;"></el-input>
+                            <el-checkbox label="必答题" name="type"></el-checkbox>
+                            <el-checkbox label="选项随机" name="type"></el-checkbox>
+                        </el-form-item>
+                        <div class="Multiple-answer">
+                            <el-form-item label="A" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-checkbox label="设为答案"></el-checkbox>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                            <el-form-item label="B" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-checkbox label="设为答案"></el-checkbox>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                            <el-form-item label="C" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入答案..." class="fl"></el-input>
+                                <el-checkbox label="设为答案"></el-checkbox>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                             <el-form-item label="">
+                                <el-button type="primary" plain>+添加选项</el-button>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <!-- 判断题 -->
+                    <div class="Single pt20 boolen">
+                        <el-form-item label="Q3" prop="name">
+                            <el-input v-model="ruleFormSecond.name" placeholder="请输入判断题目..." class="fl" style="width:50%;"></el-input>
+                            <el-input v-model="ruleFormSecond.score" placeholder="分值"  style="width:75px;margin:0 10px;"></el-input>
+                            <el-checkbox label="必答题" name="type"></el-checkbox>
+                            <el-checkbox label="选项随机" name="type"></el-checkbox>
+                        </el-form-item>
+                        <div class="Single-answer">
+                            <el-form-item label="A" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="对" class="fl"></el-input>
+                                <el-radio label="设为答案"></el-radio>
+                            </el-form-item>
+                            <el-form-item label="B" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="错" class="fl"></el-input>
+                                <el-radio label="设为答案"></el-radio>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <!-- 填空题 -->
+                    <div class="Single fill pt20">
+                        <el-form-item label="Q4" prop="name">
+                            <el-input v-model="ruleFormSecond.name" placeholder="请输入填空题目..." class="fl mr10" style="width:50%;"></el-input>
+                            <el-checkbox label="必答题" name="type"></el-checkbox>
+                        </el-form-item>
+                        <div class="Single-answer">
+                            <el-form-item label="" prop="name">
+                                <el-input v-model="ruleFormSecond.name" placeholder="请输入填空题答案" class="fl" style="width:50%;"></el-input>
+                                <el-input v-model="ruleFormSecond.score" placeholder="分值"  style="width:75px;"></el-input>
+                                <i class="el-icon-delete gray-999 pointer"></i>
+                            </el-form-item>
+                             <el-form-item label="">
+                                <el-button type="primary" plain>+添加输入框</el-button>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <!-- 简答题 -->
+                    <div class="Single pt20 freeTopic">
+                        <el-form-item label="Q5" prop="name">
+                            <el-input v-model="ruleFormSecond.name" placeholder="请输入主观题题目..." class="fl" style="width:50%;"></el-input>
+                            <el-input v-model="ruleFormSecond.score" placeholder="分值"  style="width:75px;margin:0 10px;"></el-input>
+                            <el-checkbox label="必答题" name="type"></el-checkbox>
+                        </el-form-item>
+                        <div class="Single-answer">
+                            <el-form-item label="" prop="name" style="width:495px;">
+                                <el-input type="textarea" :rows="4" v-model="ruleFormSecond.name" placeholder="请输入参考答案" class="fl"></el-input>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <el-form-item align="right">
+                        <el-button type="primary" @click="">上一步</el-button>
+                        <el-button type="primary" @click="">下一步</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="试卷详情设置" class="paperSet">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" style="width:600px">
+                    <el-table :data="tableData">
+                        <el-table-column
+                            prop="type"
+                            label="题型">
+                        </el-table-column>
+                        <el-table-column
+                            prop="total"
+                            label="题数">
+                        </el-table-column>
+                        <el-table-column
+                            prop="totalScore"
+                            label="总分值">
+                        </el-table-column>
+                    </el-table>
+                    <el-form-item align="right">
+                        <span>卷面总计 150 分</span> 
+                    </el-form-item>
+                    <el-form-item align="right">
+                        及格分：
+                        <el-input style="width:80px"></el-input>
+                    </el-form-item>
+                    <el-form-item align="right" class="pt20">
+                        <el-button type="primary" @click="">上一步</el-button>
+                        <el-button type="primary" @click="">生成试卷</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-tab-pane>
+        </el-tabs>
+        
+  </div>
+</template>
+<style scoped>
+    /* .Single-answer,.Multiple-answer{padding-left:20px; } */
+    .Single-answer .el-form-item,.Multiple-answer .el-form-item{margin-bottom: 5px;}
+    .Single-answer .el-input,.Multiple-answer .el-input{width:50%;margin-right:10px;}
+    .Single-answer .el-input__inner,.Multiple-answer .el-input__inner{height: 30px}
+    .paperSet .el-form-item{margin-bottom: 0;}
+    .el-menu-fixed{width:120px;position: absolute;top: 60px;right: 30px;text-align:center;}
+    .el-menu-fixed .el-menu-item, .el-submenu__title{height: 35px;line-height: 35px;}
+    .el-menu-fixed{padding: 10px 0;}
+</style>
+
+<script>
+  export default {
+    data() {
+      return {
+        tableData: [{
+            type: '单选题',
+            total: '10',
+            totalScore: '20'
+            }, {
+            type: '多选题',
+            total: '10',
+            totalScore: '40'
+            }, {
+            type: '填空题',
+            total: '10',
+            totalScore: '60'
+            }, {
+            type: '判断题',
+            total: '10',
+            totalScore: '10'
+            }, {
+            type: '简答题',
+            total: '10',
+            totalScore: '20'
+        }],
+        ruleForm: {
+          name: '',
+          desc: ''
+        },
+        ruleFormSecond:{
+            name: '',
+            score: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+        },
+        rulesSecond: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+        }
+      };
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  }
+</script>

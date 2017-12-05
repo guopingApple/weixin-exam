@@ -1,0 +1,5 @@
+<template>
+  <div id="main">
+    <div class="container">750px 15rem</div>
+  </div>
+</template>

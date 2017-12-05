@@ -1,0 +1,134 @@
+<template>
+    <div class="container border-box">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm-info" label-position="top" inline-message status-icon>
+            <el-form-item label="员工编号" prop="code">
+                <el-input v-model="ruleForm.code" class="textInput"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名" prop="name">
+                <el-input v-model="ruleForm.name" class="textInput"></el-input>
+            </el-form-item>
+            </el-form-item>
+            <el-form-item label="所属公司" prop="company">
+                <el-input v-model="ruleForm.company" class="textInput"></el-input>
+            </el-form-item>
+            <el-form-item label="所属部门" prop="department">
+                <el-select v-model="ruleForm.department" placeholder="请选择所在部门">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="岗位名称" prop="position">
+                <el-input v-model="ruleForm.position" class="textInput"></el-input>
+            </el-form-item>
+            <el-form-item label="民族" prop="nation" >
+                <el-input v-model="ruleForm.nation" class="textInput"></el-input>
+            </el-form-item>
+            <el-form-item label="性别" prop="gender" class="sex">
+                <el-radio-group v-model="ruleForm.gender">
+                    <el-radio label="男" value='1'></el-radio>
+                    <el-radio label="女" value='2'></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="岗位年限" prop="postionYears">
+                <el-input v-model="ruleForm.postionYears" class="textInput"></el-input>
+            </el-form-item>
+            </el-form-item>
+            <el-form-item label="联系电话" prop="phone">
+                <el-input v-model="ruleForm.phone" class="textInput"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')" class="button">提 交</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</template>
+<style lang="less" scoped>
+    @r:50rem;
+    .container{
+        width: 100%;
+        height: auto;
+        padding:20/@r 30/@r;
+    }
+    .el-form-item{
+        margin-bottom:0;
+    }
+    .button{
+        width:100%;
+        background: url("../../assets/enrolbg.png") no-repeat;
+        background-size:100% 100%;   
+        margin-top: 40/@r;    
+    }
+</style>
+<script>
+    import './list.css'
+    import qs from 'qs'
+    import axios from 'axios'
+    export default {
+        data() {
+            return {
+                ruleForm: {
+                    id: '',
+                    name:'',
+                    code:'',
+                    openid:'',
+                    password:'',
+                    phone:'',
+                    company:'',
+                    department:'',
+                    position:'',
+                    nation:'',
+                    gender:'',
+                    postionYears:''
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '请输入姓名', trigger: 'blur' },
+                        { min: 1, max: 20, message: '长度在 20 个字符之内', trigger: 'blur' }
+                    ],
+                    code: [
+                        { required: true, message: '请输入员工编码', trigger: 'blur' }
+                    ],
+                    department: [
+                        { required: true, message: '请选择所属部门', trigger: 'blur' }
+                    ],
+                    gender:[
+                        { required: true, message: '请选择性别', trigger: 'blur' }
+                    ]
+                }
+            }
+        },
+        mounted() {
+
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    sessionStorage.setItem("person",'true');
+                    let that = this
+                    if(this.ruleForm.gender=='男'){
+                        this.ruleForm.gender=1
+                    }else if(this.ruleForm.gender=='女'){
+                        this.ruleForm.gender=2
+                    }
+                    let param = qs.stringify(this.ruleForm)
+                    console.log(param,this.ruleForm)
+                    this.axios.post(this.biz.examUrl+'rest/web/employeeUpdate',param,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
+                    console.log(res)
+                    if(res.status==200){   
+                        // that.$router.push({path: '/companyManage'});
+                    }
+                    // _this.tableData = res.data.datas
+                    // _this.form = res.data.fsp
+                    }).catch(function (res) {
+                        console.log(res)
+                    })
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+                });
+            }
+        }
+    }
+</script>

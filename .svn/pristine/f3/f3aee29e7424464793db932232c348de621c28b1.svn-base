@@ -1,0 +1,249 @@
+<template>
+  <div>
+      <div class="bg-gray"></div>
+      <img src="../../assets/exam.jpg" alt="" class = "img-exam">
+      <section class="examList relative" :style="{ '-webkit-overflow-scrolling': scrollMode,'height': wrapperHeight + 'px'}" ref="wrapper">
+        
+        <img src="../../assets/none.png" alt="" class="none" v-show = 'examList.length == 0'>
+
+        <v-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" :bottomPullText='bottomText' :bottomLoadingText = 'bottomLoadingText' @bottom-status-change="handlebottomChange" :bottomDistance = '70' style="min-height:100%;" v-if = 'examList.length != 0'> 
+
+                <div v-if ='latest.length != 0' >
+                    <h3><img src="../../assets/data.png" alt="">{{currYear}}下半年</h3>
+                    <div class='center f16' v-if ='latest.length == 0'>暂无下半年数据</div>
+                    <ul>
+                        <li class="lineTop lineBottom" v-for="(item,index) in latest" @click="exam(item.id)">
+                            <h2>{{ item.name }}</h2>
+                            <p>{{ item.createTime }}</p>
+                            <span></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div v-if ='half.length != 0' >
+                    <h3><img src="../../assets/data.png" alt="">{{currYear}}上半年</h3>
+                    <ul>
+                        <li class="lineTop lineBottom" v-for="(item,index) in half" @click="exam(item.id)">
+                            <h2>{{ item.name }}</h2>
+                            <p>{{ item.createTime }}</p>
+                            <span></span>
+                        </li>
+                    </ul>
+                </div>
+            <!-- <div slot="bottom" class="mint-loadmore-bottom">
+                <span v-show="bottomStatus !== 'loading'" :class="{ 'rotate': bottomStatus === 'drop' }">↓</span>
+                <span v-show="bottomStatus === 'loading'">Loading...</span>
+            </div> -->
+        </v-loadmore>
+      </section>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.bg-gray{position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: -1;background-color:#f5f5f5}
+.img-exam{width:750/@r;height:260/@r;}
+.none{width: 245/@r;height: 245/@r;display: block;position:absolute;top:270/@r;left:50%;transform:translateX(-50%)}
+// .examList{z-index:1;}
+.examList h3{height: 60/@r;line-height: 60/@r;color: #0085d0;font-size: 24/@r;padding:0 40/@r;}
+.examList h3 img{width: 19/@r;height: 19/@r;margin-right: 10/@r;position: relative;top: -4/@r;}
+.examList ul li{padding: 20/@r 180/@r 0 40/@r;background-color:#fff;margin-bottom: 20/@r;}
+.examList ul li:last-child{margin-bottom: 0;}
+.examList ul li h2{color: #4c4c4c;font-size: 30/@r;line-height: 42/@r;font-weight: normal;}
+.examList ul li p{color: #999;font-size: 24/@r;line-height: 56/@r;}
+.examList ul li span {
+  width:20/@r;
+  height: 20/@r;
+  content: ' ';
+  background-color: transparent;
+  border-top: 1px solid #6b6c6b;
+  border-right: 1px solid #6b6c6b;
+  position: absolute;
+  top:50%;
+  right: 35/@r;
+  -webkit-transform:rotate(45deg) translateY(-50%);
+  transform: rotate(45deg) translateY(-50%);
+}
+</style>
+<script>
+let qs = require('qs')
+let axios = require('axios')
+
+import { Loadmore } from 'mint-ui'
+import { Toast } from 'mint-ui'
+import { MessageBox } from 'mint-ui'
+
+export default {
+    components:{
+      'v-loadmore':Loadmore,
+    },
+    data(){
+        return{
+            currYear:'',
+            examList:[],
+            half:[],
+            latest:[],
+            pageNo:1,
+            pageSize:6,
+            allLoaded: false, // 是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
+            scrollMode:"auto", // 移动端弹性滚动效果，touch为弹性滚动，auto是非弹性滚动
+            totalpage:0,
+            loading:false,
+            bottomText: '上拉加载更多...',
+            bottomDropText:'释放更新',
+            bottomLoadingText:'加载中...',
+            wrapperHeight: 0,
+            bottomStatus:''
+        }
+    },
+    mounted: function () {
+        let myDate = new Date()
+        this.currYear = myDate.getFullYear()
+        this.wrapperHeight = document.documentElement.clientHeight - this.$refs.wrapper.getBoundingClientRect().top;
+        // console.log( this.$refs.wrapper.offsetTop )
+        this.list() // 初次访问查询列表
+    },
+    methods: {
+        handlebottomChange(status) {
+            this.bottomStatus = status;
+            // console.log( status )
+        },
+        
+        list: function () {
+            let that = this
+            let param = qs.stringify({'pageNo':this.pageNo,'pageSize':this.pageSize})
+            console.log( param )
+            this.axios.post(this.biz.serverUrl + '/wechatpaper/list',param,this.biz.urlencodedConfig) 
+            .then(function (res) {
+                // console.log(res)
+                that.examList = res.data.datas
+                that.totalpage = res.data.fsp.pageCount // 总数
+                console.log( that.totalpage )
+
+                if(that.totalpage == 1){
+                    that.allLoaded = true
+                    that.scrollMode = "touch"
+                    that.bottomText =  '已加载全部数据'
+                }
+                // 时间
+                that.examList.forEach(function(v,i){                   
+                    let time = new Date(that.examList[i].createTime)
+                    that.examList[i].createTime = that.getTimer(time)
+                    
+                    let year = that.examList[i].createTime.substring(0,4)
+                    let mon = that.examList[i].createTime.substring(5,7)
+                   
+                    if (year == that.currYear &&  parseInt( mon ) >= 1 && parseInt( mon ) <= 6 ) {
+                        that.half.push ( that.examList[i] ) 
+                    }else if(year == that.currYear && parseInt( mon ) >= 7 ){
+                        that.latest.push ( that.examList[i] ) 
+                    }
+                })
+
+            }).catch(function (res) {
+                console.log(res)
+            })
+        },
+        loadBottom:function() {
+            // 上拉加载
+            this.more();// 上拉触发的分页查询
+            this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+        },
+        more:function (){ 
+            // 分页查询
+            if(this.totalpage == 1){
+                this.pageNo = 1;
+                this.allLoaded = true;
+            }else{
+                this.pageNo = parseInt(this.pageNo) + 1;
+                this.allLoaded = false;
+
+                let that = this
+                let param = qs.stringify({'pageNo':this.pageNo,'pageSize':this.pageSize})
+                
+                // setTimeout(() => {
+                    this.axios.post(this.biz.serverUrl + '/wechatpaper/list',param,this.biz.urlencodedConfig)
+                    .then(function (res) {
+                        that.examList = res.data.datas
+                        // 时间
+                        that.examList.forEach(function(v,i){                   
+                            let time = new Date(that.examList[i].createTime)
+                            that.examList[i].createTime = that.getTimer(time)
+                            
+                            let year = that.examList[i].createTime.substring(0,4)
+                            let mon = that.examList[i].createTime.substring(5,7)
+                        
+                            if (year == that.currYear &&  parseInt( mon ) >= 1 && parseInt( mon ) <= 6 ) {
+                                that.half.push ( that.examList[i] ) 
+                            }else if(year == that.currYear && parseInt( mon ) >= 7 ){
+                                that.latest.push ( that.examList[i] ) 
+                            }
+                        })
+                        that.$nextTick(function () {
+                            // 是否还有下一页，加个方法判断，没有下一页要禁止上拉
+                            that.scrollMode = "touch"
+                            // this.allLoaded = false; // true 是禁止上拉加载
+                            if(that.pageNo == that.totalpage){
+                                that.allLoaded = true
+                                Toast({
+                                    message: '全部加载完成',
+                                    duration: 2000
+                                })
+                                let ele = document.querySelector('.mint-loadmore-bottom')
+                                ele.style.display='none'
+                            }
+                        })
+                        // this.$nextTick(function () {  
+                        //     // 原意是DOM更新循环结束时调用延迟回调函数，大意就是DOM元素在因为某些原因要进行修改就在这里写，要在修改某些数据后才能写，  
+                        //     // 这里之所以加是因为有个坑，iphone在使用-webkit-overflow-scrolling属性，就是移动端弹性滚动效果时会屏蔽loadmore的上拉加载效果，  
+                        //     // 花了好久才解决这个问题，就是用这个函数，意思就是先设置属性为auto，正常滑动，加载完数据后改成弹性滑动，安卓没有这个问题，移动端弹性滑动体验会更好  
+                        //     this.scrollMode = "touch";  
+                        // });
+                    });
+
+                // }, 1500);
+
+            }
+        },
+        // isHaveMore:function(){
+        //     // 是否还有下一页，如果没有就禁止上拉刷新
+        //     // this.allLoaded = false; // true 是禁止上拉加载
+        //     if(this.pageNo == this.totalpage){
+        //         this.allLoaded = true;
+        //     }
+        // },
+        exam(id) {
+            console.log(id)
+            let that = this
+            let param = qs.stringify({'paperId':id,'employeeId':'1'})
+
+            // console.log(param)
+
+            this.axios.post(this.biz.serverUrl + '/wechatpaper/check',param,this.biz.urlencodedConfig)
+            .then(function (res) {
+                console.log(res)
+                    if (res.data.isExam) {// 已考试
+                        that.$router.push({path: '/examResult',query:{param:param}})
+                    }else{// 未考试
+                        if(res.data.hasPaper){ // 试卷存在
+                            
+                            if (!res.data.canExam) { // 能不能考试
+                                MessageBox('提示', '不能考试')
+                                MessageBox.alert('不能考试').then(action => {
+                                    // that.$router.go(-1)
+                                })
+                            }else{
+                                that.$router.push({path: '/paperInfo',query:{param:param}})
+                            }
+                        }else{
+                            MessageBox('提示', '试卷不存在！')
+                        }
+                    }
+                
+            }).catch(function (res) {
+                console.log(res)
+            })
+            // this.$router.push({path: '/paperInfo'})
+        }
+    }
+}
+</script>

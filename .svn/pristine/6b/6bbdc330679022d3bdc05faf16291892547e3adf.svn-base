@@ -1,0 +1,208 @@
+<template>
+    <div>
+        <el-form ref="form" :model="form" inline class="pt15 pl20">
+            <el-form-item label="签到主题">
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="创建人">
+                <el-input v-model="form.create"></el-input>
+            </el-form-item>
+            <el-form-item label="状态">
+                <el-select v-model="form.region" placeholder="请选择">
+                    <el-option label="未设置" value="notSet"></el-option>
+                    <el-option label="有效" value="valid"></el-option>
+                    <el-option label="无效" value="novalid"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="活动时间">
+                <el-col :span="11">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+                </el-col>
+                <el-col class="line center" :span="1">-</el-col>
+                <el-col :span="11">
+                    <!-- <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker> -->
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date2" style="width: 100%;"></el-date-picker>
+                </el-col>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">查询</el-button>
+                <el-button @click="resetForm('form')">重置</el-button>
+            </el-form-item>
+        </el-form>
+        <div class="button">
+            <el-button type="primary" size="medium" @click="addInfo()">创建签到信息</el-button>
+            <el-button type="primary" size="medium">批量导出Excel</el-button>
+        </div>
+        <div class="p10">
+            <el-table :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)" style="width: 100%">
+                <el-table-column
+                    prop="id"
+                    label="序号"
+                    width="60"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="签到主题"
+                    width="270"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="state"
+                    label="状态"
+                    width="90"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="date"
+                    label="创建时间"
+                    width="160"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="creat"
+                    label="创建人"
+                    width="110"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="signin"
+                    label="已签到人数"
+                    width="110">
+                    <template slot-scope="scope">                       
+                        <div slot="reference" class="name-wrapper">
+                            <el-button class='signinPeople' @click='toResult(scope.row.id)'>{{ scope.row.signin }}</el-button>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="operation"
+                    label="操作">
+                    <template slot-scope="scope">
+                        <el-button @click="handleClick(scope.row.id)" type="primary" size="mini">查看</el-button>
+                        <el-button type="primary" size="mini">有效</el-button>
+                        <el-button type="primary" size="mini">修改</el-button>
+                        <el-button type="danger" size="mini"  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[5,10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="tableData.length" style="margin:15px auto;text-align: center">
+            </el-pagination>
+        </div>
+    </div>
+</template>    
+<style>
+    .signinPeople{
+        width:100%;
+        display:inline-block;
+        border: none;
+        background: none;
+    }
+</style>
+<script>
+ export default {
+    data() {
+      return {
+        form: {
+          name: '',
+          create:'',
+          region: '',
+          date1: '',
+          date2: ''
+        },
+        currentPage: 1,
+        pageSize: 10,
+        tableData:[
+            {
+                id: '1',
+                name: '测试条件2',
+                signin: '1',
+                time: '0分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '未设置',
+                operation: ''
+            },
+            {
+                id: '2',
+                name: '新疆移动Office 办公操作实务培训测',
+                signin: '0',
+                time: '120分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '有效',
+                operation: ''
+            },
+            {
+                id: '3',
+                name: '测试测试',
+                signin: '25',
+                time: '60分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '无效',
+                operation: ''
+            },
+            {
+                id: '4',
+                name: '测试测试',
+                signin: '25',
+                time: '60分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '无效',
+                operation: ''
+            },
+            {
+                id: '5',
+                name: '测试测试',
+                signin: '25',
+                time: '60分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '无效',
+                operation: ''
+            },
+            {
+                id: '6',
+                name: '测试测试',
+                signin: '25',
+                time: '60分钟',
+                date: '2017-08-15 11:42:44',
+                creat: 'superAdmin',
+                state: '无效',
+                operation: ''
+            }
+        ]
+      }
+    },
+    methods: {
+      onSubmit() {
+        console.log('submit!');
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      handleSizeChange: function (size) {
+        this.pageSize = size
+      },
+      handleCurrentChange: function (currentPage) {
+        this.currentPage = currentPage
+      },
+      toResult:function(id){
+          this.$router.push({path: '/signinResult',query:{id:id}});		
+      },
+      addInfo:function(){
+          this.$router.push({path: '/signinaddInfo'});		
+      }
+    }
+  }
+</script>

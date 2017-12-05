@@ -1,0 +1,126 @@
+<template>
+  <div class="examOnline">
+      <div class="examTitle relative">
+          <img src="../../assets/exam-title.jpg" width="100%" alt="">
+          <p class="flex hvCenter">2017年度中国移动客户服务项目组服务考试试题</p>
+      </div>
+      <!-- <img src="../../assets/temp.jpg" width="100%" alt=""> -->
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  class="demo-ruleForm">
+        <dl>
+            <dt>1.我为自己能够成为中国移动的客户经理尔感到自豪?<em class="red">*</em></dt>
+            <dd>
+                <em class="radio radio-sel">A</em><span>非常满意</span>
+            </dd>
+            <dd><em class="radio">B</em><span>非常同意</span></dd>
+            <dd><em class="radio">C</em><span>非常不满意</span></dd>
+            <dd><em class="radio">D</em><span>比较满意</span></dd>
+        </dl>
+        <dl class="checkbox-item">
+            <dt>2.从提高个人业务的角度,你最希望参与哪些培训？（多选）<em class="red">*</em></dt>
+            <dd>
+                <em class="checkbox checkbox-sel"></em><span>业务知识</span>
+            </dd>
+            <dd><em class="checkbox"></em><span>移动内部协调</span></dd>
+            <dd><em class="checkbox"></em><span>客户心理把握</span></dd>
+            <dd><em class="checkbox"></em><span>情绪压力管理</span></dd>
+        </dl>
+        <dl>
+            <dt>3.公司在哪些方面有所优化,可以提高你的工作 积极性？<em class="red">*</em></dt>
+            <dd>
+                <em class="radio radio-sel">A</em><span>对</span>
+            </dd>
+            <dd><em class="radio">B</em><span>错</span></dd>
+        </dl>
+        <dl>
+            <dt>4.从提高个人业务的角度,你最希望参与哪些培训？<em class="red">*</em></dt>
+            <dd>
+                <el-input></el-input>
+            </dd>
+        </dl>
+        <dl>
+            <dt>5.在功能区上的______下的______选项位置可找到插入声音文件的命令。<em class="red">*</em>（填空）</dt>
+        </dl>
+      </el-form>
+      <div class="ok">
+        <a href="##" class="border-radius5 btn-ok " @click="ok">确定</a>
+      </div>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.examTitle p{position: absolute;left: 0;right: 0;top: 0;bottom: 0;font-size: 32/@r;color: #fff;line-height: 40/@r;padding: 0 150/@r;text-align:center; }
+.btn-ok{width: 100%; height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;background: -webkit-linear-gradient(left, #0080cc, #00c0cc);background: linear-gradient(left, #0080cc, #00c0cc);}
+.ok{padding-bottom: 60/@r;background-color: #fff;position: fixed;left: 35/@r;right: 35/@r; bottom: 0;}
+.demo-ruleForm{padding: 35/@r 35/@r 120/@r;color: #1b1b1b;font-size: 32/@r;line-height: 42/@r;}
+.demo-ruleForm dl{padding-bottom:30/@r;}
+.demo-ruleForm dl dt{font-weight: bold;margin-bottom:30/@r;}
+.demo-ruleForm dl dd{color: #101010;font-size: 30/@r;margin-bottom: 20/@r;padding-left: 25/@r;}
+.demo-ruleForm dl dd span{display: inline-block;line-height:50/@r;}
+// .radio{width: 50/@r;height: 50/@r;display: inline-block;line-height:48/@r; border:solid 1px #0085d0;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;position: relative;}
+.radio{width: 50/@r;height: 50/@r;line-height:50/@r;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;background:url(../../assets/radio.png) no-repeat;background-size:50/@r 50/@r;display:block;float: left;}
+.radio-sel{background-image: url(../../assets/radio-sel.png);color: #fff;}
+.checkbox{width: 30/@r;height: 30/@r;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;background:url(../../assets/checkbox.png) no-repeat;background-size:30/@r 30/@r;display:block;float: left;margin-top: 10/@r;}
+.checkbox-sel{background-image: url(../../assets/checkbox-sel.png);color: #fff;}
+.checkbox-item {overflow: hidden;}
+.checkbox-item dd{width: 45%;float: left;}
+</style>
+<script>
+  export default {
+    data() {
+      return {
+        ruleForm: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          region: [
+            { required: true, message: '请选择活动区域', trigger: 'change' }
+          ],
+          date1: [
+            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+          ],
+          date2: [
+            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+          ],
+          type: [
+            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+          ],
+          resource: [
+            { required: true, message: '请选择活动资源', trigger: 'change' }
+          ],
+          desc: [
+            { required: true, message: '请填写活动形式', trigger: 'blur' }
+          ]
+        }
+      };
+    },
+    methods: {
+        ok() {
+        this.$router.push({path: '/examResult'})
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  }
+</script>

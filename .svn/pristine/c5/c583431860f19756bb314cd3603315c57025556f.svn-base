@@ -1,0 +1,9 @@
+<template>
+  <div id="main">
+    <div class="container">750px 15rem</div>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.container{width:750/@r;height: 100%;background-size: 100% 100%;}
+</style>

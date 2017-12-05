@@ -1,0 +1,72 @@
+<template>
+  <div id="main">
+    <div class="container">
+      <img src="../assets/logo.png" alt="" class="logo">
+      <section class="mianIcon center">
+        <div class="flex mb150">
+          
+            <div class="flex1" @click="enrol()"><img src="../assets/home-icon-01.png">培训报名</div>
+            <div class="flex1" @click="survey()"><img src="../assets/home-icon-02.png">培训调研</div>
+        </div>
+        <div class="flex">
+            <div class="flex1" @click="signin()"><img src="../assets/home-icon-03.png">培训签到</div>
+            <div class="flex1" @click="exam()"><img src="../assets/home-icon-04.png">培训考试</div>
+        </div>
+      </section>
+      <footer>黑龙江在线培训管理平台</footer>
+    </div>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+#main{height: 100%;}
+.container{width:100%;height: 100%;background: url(../assets/bg-main.jpg) no-repeat; background-size: 100% 100%;}
+.logo{width: 183/@r;height: 52/@r;position:absolute;top: 40/@r;left: 35/@r;z-index: 9;}
+.mianIcon{padding: 340/@r 40/@r 0;font-size: 20/@r;color: #000;}
+.mianIcon img{width: 185/@r;height: 185/@r;display:block;margin: 0 auto 20/@r;}
+.mb150{margin-bottom: 150/@r;}
+footer{position:absolute;color: #1e74e1;font-size: 16/@r;left: 0;right: 0;bottom: 50/@r;text-align:center;}
+</style>
+<script>
+  export default {
+    data(){
+      return {
+
+      }
+    },
+    mounted(){
+
+    },
+    methods:{
+      enrol(){
+        console.log(sessionStorage.getItem("person"))
+        if(sessionStorage.getItem("person")){
+          this.$router.push({'path':'/enrolList'})
+        }else{
+          this.$router.push({'path':'/personInfo'})
+        }
+      },
+      survey(){
+        if(sessionStorage.getItem("person")){
+          this.$router.push({'path':'/surveyList'})
+        }else{
+          this.$router.push({'path':'/personInfo'})
+        }
+      },
+      signin(){
+        if(sessionStorage.getItem("person")){
+          this.$router.push({'path':'/signinList'})
+        }else{
+          this.$router.push({'path':'/personInfo'})
+        }
+      },
+      exam(){
+        if(sessionStorage.getItem("person")){
+          this.$router.push({'path':'/examList'})
+        }else{
+          this.$router.push({'path':'/personInfo'})
+        }
+      }
+    }
+  }
+</script>

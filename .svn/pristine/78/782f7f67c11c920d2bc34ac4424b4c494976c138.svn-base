@@ -1,0 +1,102 @@
+<template>
+  <div>
+      <div class="bg-gray"></div>
+      <img src="../../assets/exam.jpg" width="100%" alt="">
+      <section class="examList">
+          <h3><img src="../../assets/data.png"alt="">最近半年</h3>
+          <ul v-for="(item,index) in halfList">
+              <li class="lineTop lineBottom" @click="exam(item.id)">
+                  <h2>{{ item.name }}</h2>
+                  <p>{{ item.createTime }}</p>
+                  <span></span>
+              </li>
+          </ul>
+      </section>
+      <section class="examList">
+          <h3><img src="../../assets/data.png"alt="">半年前到一年前</h3>
+          <ul v-for="(item,index) in oneList">
+              <li class="lineTop lineBottom" @click="exam(item.id)">
+                  <h2>{{ item.name }}</h2>
+                  <p>{{ item.createTime }}</p>
+                  <span></span>
+              </li>
+          </ul>
+      </section>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.bg-gray{position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: -1;background-color:#f5f5f5}
+.examList h3{height: 60/@r;line-height: 60/@r;color: #0085d0;font-size: 24/@r;padding:0 40/@r;}
+.examList h3 img{width: 19/@r;height: 19/@r;margin-right: 10/@r;position: relative;top: -4/@r;}
+.examList ul li{padding: 20/@r 180/@r 0 40/@r;background-color:#fff;margin-bottom: 20/@r;}
+.examList ul li:last-child{margin-bottom: 0;}
+.examList ul li h2{color: #4c4c4c;font-size: 30/@r;line-height: 42/@r;font-weight: normal;}
+.examList ul li p{color: #999;font-size: 24/@r;line-height: 56/@r;}
+.examList ul li span {
+  width:26/@r;
+  height: 26/@r;
+  content: ' ';
+  background-color: transparent;
+  border-top: 1px solid #6b6c6b;
+  border-right: 1px solid #6b6c6b;
+  position: absolute;
+  top:50%;
+  right: 35/@r;
+  -webkit-transform:rotate(45deg) translateY(-50%);
+  transform: rotate(45deg) translateY(-50%);
+}
+</style>
+<script>
+let qs = require('qs')
+let axios = require('axios')
+export default {
+    data(){
+        return{
+            halfList:[],
+            oneList:[]
+        }
+    },
+    mounted: function () {
+      this.list()
+    },
+    methods: {
+        list: function () {
+            let that = this
+
+            this.axios.post(this.biz.serverUrl + '/wechatpaper/list',this.biz.urlencodedConfig)
+            .then(function (res) {
+                // console.log(res)
+                that.halfList = res.data.halfList
+                that.oneList = res.data.oneList
+
+            }).catch(function (res) {
+                console.log(res)
+            })
+        },
+        exam(id) {
+            console.log(id)
+            let that = this
+            let param = qs.stringify({'paperId':id,'employeeId':'2'})
+
+            this.axios.post(this.biz.serverUrl + '/wechatpaper/detail',param,this.biz.urlencodedConfig)
+            .then(function (res) {
+                console.log(res)
+                if (res.data.isExam) {// 已考试
+                    that.$router.push({path: '/examResult',query:{param:param}})
+                }else{// 未考试
+                    
+                    if(res.data.hasPaper){
+                        that.$router.push({path: '/paperInfo',query:{param:param}})
+                    }else{
+                        that.$message.error({message: '试卷不存在！'})
+                    }
+                }
+            }).catch(function (res) {
+                console.log(res)
+            })
+            // this.$router.push({path: '/paperInfo'})
+        }
+    }
+}
+</script>

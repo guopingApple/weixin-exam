@@ -1,0 +1,8 @@
+.sex .el-form-item__content{
+    display: inline-block;
+    margin-left: 15px;
+    vertical-align: middle;
+}
+.el-form--label-top .el-form-item__label{
+    padding:0 !important;
+}

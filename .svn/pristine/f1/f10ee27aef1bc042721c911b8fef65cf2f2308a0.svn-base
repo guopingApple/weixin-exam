@@ -1,0 +1,228 @@
+<template>
+  <div id="main">
+    <app-header></app-header>
+    <el-row class="tac">
+      <el-col :span="3" class="main-left">
+        <app-menu></app-menu>
+      </el-col>
+      <el-col :span="21" class="main-right el-col-offset-3">
+        <!-- 面包屑统一用UI库 -->
+        <el-breadcrumb class="yp-crumbs-box" separator="/">
+          <el-breadcrumb-item :to="{ path: 'media' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item>{{pageTitle}}</el-breadcrumb-item>
+        </el-breadcrumb>
+        <router-view></router-view>
+      </el-col>
+    </el-row>
+    <!--<app-footer></app-footer>-->
+  </div>
+</template>
+<script>
+  import appHeader from '../components/header.vue'
+  import appMenu from '../components/leftMenu.vue'
+  import appFooter from '../components/footer.vue'
+
+  export default {
+    name: 'main',
+    components: {
+      appHeader,
+      appFooter,
+      appMenu
+    },
+    data: function () {
+      return {
+        pageTitle: this.$store.state.pageInf.title,
+        // pageTitle:sessionStorage.title,
+        msg: 'LOGO',
+        user: {userName: 'fy@zhiruyi.com'}
+      }
+    },
+    mounted: function () {
+      this.getLoginName()
+      // this.getPubData();
+      console.log('main init>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    },
+    computed: {
+      getPageTitle () {
+        return this.$store.state.pageInf.title
+      }
+    },
+    watch: {
+      getPageTitle (val) {
+        this.pageTitle = val
+      }
+    },
+    methods: {
+      setNavSelected: function (index) {//设置导航选中项
+        console.log(index)
+//        var nav = this.navList, menu = nav[index];
+//        for (var i in nav) {
+//          this.$set(nav[i], 'active', false);
+//        }
+//        this.$set(menu, 'active', true);
+      },
+      getPubData () {
+        var that = this
+        this.axios.get(this.biz.serverUrl + '/rest/pubData').then(function (res) {
+          // $store.commit('setPubData',{title:to.meta.title});
+          that.$store.commit('setPubData', res.data.element)
+          console.log('setPubData')
+          console.log(res.data.element)
+        })
+      },
+      getLoginName () {
+        var that = this
+        this.axios.get(this.biz.serverUrl + '/rest/getLoginName').then(function (res) {
+          that.user.userName = res.data.element
+        })
+      },
+      exitLogin: function () {//退出登录
+
+        this.axios.get(this.biz.serverUrl + '/rest/logout')
+        this.$store.commit('setUser', {})
+        this.$router.push({path: '/login'})
+        sessionStorage.removeItem('user')
+      }
+
+    }
+  }
+</script>
+
+<style>
+  .el-loading-mask {
+    position: fixed !important;
+  }
+
+  .el-submenu .el-menu-item {
+    min-width: 20px;
+  }
+
+  div#yp-user-box {
+    display: block;
+    height: 46px;
+    line-height: 46px;
+    float: right;
+    margin-right: 20px;
+  }
+
+  #yp-exit-btn {
+    width: 22px;
+    height: 19px;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    background: url(../assets/yp-ssp-icon.png) no-repeat;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  ul#yp-nav {
+    height: 46px;
+    display: inline-block;
+  }
+
+  ul#yp-nav li {
+    float: left;
+    height: 46px;
+    padding: 0 0 0 20px;
+    margin: 0 20px;
+    line-height: 46px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  i.yp-nav-icon {
+    width: 20px;
+    height: 16px;
+    display: inline-block;
+    background: url(../assets/yp-ssp-icon.png) no-repeat;
+    position: absolute;
+    top: 15px;
+    left: 0;
+  }
+
+  img.yp-nav-active {
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: none;
+  }
+
+  #yp-nav li:hover img.yp-nav-active {
+    display: block;
+  }
+
+  div.yp-crumbs-box {
+    height: 46px;
+    line-height: 46px;
+    padding-left: 20px;
+    border-bottom: 1px solid #E2E2E2;
+  }
+
+  .yt-list {
+    margin: 0 1rem 0 1rem
+  }
+
+  .yt-list .table-div .table-add {
+    margin-bottom: 1rem
+  }
+
+  .yt-list .el-pagination {
+    text-align: center
+  }
+
+  .yt-list .el-form {
+    margin: 1rem 0 1rem 0
+  }
+
+  .yt-list .el-pagination {
+    margin: 1rem 0 1rem 0
+  }
+
+  .yt-list .yp_tip_button {
+    background: #eafaf0 !important;
+    color: #2ecd71 !important;
+    border: 1px solid #2ecd71 !important;
+    /*box-shadow:0 0 5px #2DCC70;*/
+    margin-bottom: 0px;
+    transition: all 0.5s !important;
+    font-size: 12px !important;
+  }
+
+  .yt-list .yp_tip_button:hover {
+    background: #2DCC70 !important;
+    color: #fff !important;
+    /*border:none !important;*/
+    box-shadow: 0 0 5px #2DCC70 !important;
+    margin-bottom: 0px;
+  }
+
+  .yt-add {
+    width: 30%;
+    margin: 1rem 1rem 0 1rem
+  }
+
+  .yt-edit {
+    width: 30%;
+    margin: 1rem 1rem 0 1rem
+  }
+  
+</style>
+
+<style scoped="scoped">
+  .main-left {
+    height: 100%;
+    background-color: #e6e6e6;
+    position: fixed;
+    float: left;
+    top: 65px;
+    bottom: 0;
+  }
+
+  #main {
+    padding-top: 65px;
+  }
+</style>

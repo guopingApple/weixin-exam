@@ -1,0 +1,389 @@
+<template>
+  <div class="examOnline">
+      <div class="examTitle relative">
+          <img src="../../assets/exam-title.jpg" width="100%" alt="">
+          <p class="flex hvCenter">2017年度中国移动客户服务项目组服务考试试题</p>
+      </div>
+      <!-- <img src="../../assets/temp.jpg" width="100%" alt=""> -->
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  class="demo-ruleForm">
+        <div v-for="(item,index) in examList">
+          <dl v-if="item.questionType == 1 ">
+              <dt>{{ index + 1 }}.{{item.question}}<em class="red">*</em></dt>
+              <dd v-for="(item2,innerIndex) in item.answers">
+                <el-radio-group v-model="item.radio"  @change="changeHandler(index,innerIndex)"><!-- 此处为父级的 item.radio -->
+                    <el-radio :label='item2.lable'>{{ String.fromCharCode(64 + parseInt( innerIndex + 1 )) }} . {{ item2.value }}</el-radio>
+                </el-radio-group>
+              </dd>
+          </dl>
+          <dl class="checkbox-item" v-if="item.questionType == 2 ">
+              <dt>{{ index + 1 }}.{{item.question}}（多选）<em class="red">*</em></dt>
+              <dd v-for="(item2,innerIndex) in item.answers">
+                <el-checkbox v-model="item2.checkbox" @change="changeCheckBox">{{ item2.value }}</el-checkbox>
+              </dd>
+          </dl>
+          <dl v-if="item.questionType == 3 ">
+              <dt>{{ index + 1 }}.{{item.question}} <em class="red">*</em></dt>
+              <dd v-for="(item2,innerIndex) in item.answers">
+                <el-radio-group v-model="item.radio" @change="changeHandler(index,innerIndex)"><!-- 此处为父级的 item.radio -->
+                    <el-radio :label='item2.lable'>{{ item2.value }}</el-radio>
+                </el-radio-group>
+              </dd>
+          </dl>
+          <dl v-if="item.questionType == 4 ">
+              <dt>{{ index + 1 }}.
+                <span v-html='item.questionFill'></span> <em class="red">*</em>（填空）
+              </dt>
+              <!-- <dd><el-input v-model="item.answers"></el-input></dd> -->
+          </dl>
+          <el-form-item label="" prop="answer"  v-if="item.questionType == 5 " style="margin-bottom:0">
+            <dl style="padding-bottom:0">
+                <dt style="margin-bottom:0">{{ index + 1 }}.{{item.question}}<em class="red">*</em></dt>
+                <dd style="padding-left:0">
+                    <el-input type="textarea" v-model="item.answers" :autosize="{ minRows: 2, maxRows: 4}" class="mt10"></el-input>
+                </dd>
+            </dl>
+          </el-form-item>
+        </div>
+      </el-form>
+      <div class="ok">
+        <a href="##" class="border-radius5 btn-ok " @click="submitForm('ruleForm')">确定</a>
+      </div>
+      <!-- 倒计时 -->
+      <el-alert title="" type="success" :closable="false">{{minute}}:{{second}}</el-alert>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.mt10{margin-top: 10/@r}
+.examTitle p{position: absolute;left: 0;right: 0;top: 0;bottom: 0;font-size: 32/@r;color: #fff;line-height: 40/@r;padding: 0 150/@r;text-align:center; }
+.btn-ok{width: 100%; height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;background: -webkit-linear-gradient(left, #0080cc, #00c0cc);background: linear-gradient(left, #0080cc, #00c0cc);}
+.ok{padding-bottom: 60/@r;background-color: #fff;position: fixed;left: 35/@r;right: 35/@r; bottom: 0;}
+.demo-ruleForm{padding: 35/@r 35/@r 150/@r;color: #1b1b1b;font-size: 32/@r;line-height: 42/@r;}
+.demo-ruleForm dl{padding-bottom:30/@r;}
+.demo-ruleForm dl dt{font-weight: bold;margin-bottom:30/@r;}
+.demo-ruleForm dl dd{color: #101010;font-size: 30/@r;margin-bottom: 20/@r;padding-left: 25/@r;}
+.demo-ruleForm dl dd span{display: inline-block;line-height:50/@r;}
+// .radio{width: 50/@r;height: 50/@r;display: inline-block;line-height:48/@r; border:solid 1px #0085d0;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;position: relative;}
+.radio{width: 50/@r;height: 50/@r;line-height:50/@r;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;background:url(../../assets/radio.png) no-repeat;background-size:50/@r 50/@r;display:block;float: left;}
+.radioSel{background-image: url(../../assets/radio-sel.png);color: #fff;}
+.checkbox{width: 30/@r;height: 30/@r;color: #0085d0;font-size: 22/@r;text-align: center;margin-right:18/@r;background:url(../../assets/checkbox.png) no-repeat;background-size:30/@r 30/@r;display:block;float: left;margin-top: 10/@r;}
+.checkboxSel{background-image: url(../../assets/checkbox-sel.png);color: #fff;}
+.checkbox-item {overflow: hidden;}
+.checkbox-item dd{width: 45%;float: left;}
+.el-form-item__error{bottom: 6px;left: 25/@r;}
+.blue{color:#0085d0;}
+</style>
+<script>
+let qs = require('qs')
+let axios = require('axios')
+import { Toast } from 'mint-ui'
+import { MessageBox } from 'mint-ui'
+
+  export default {
+    data() {
+      return {
+        param: this.$route.query.param,
+        employeeId: this.$route.query.employeeId,// 员工id
+        // duration:this.$route.query.duration,
+        submitpaper:{
+          answerDetails:[],
+          paperId:'',
+          employeeId:this.$route.query.employeeId
+        },
+        examList:[],
+        minutes:this.$route.query.duration, // 倒计时
+        // minutes:1, // 倒计时
+        seconds:0,
+
+        ruleForm: {
+          question: ''
+        },
+        rules: {
+          question: [
+            { required: true, message: '请输入答案', trigger: 'blur' },
+          ]
+        }
+      }
+    },
+    mounted: function () {
+      console.log('员工id----' +  this.submitpaper.employeeId )
+      this.findById(this.param)
+      this.add()
+    },
+    methods: {
+      findById (param) {
+          let that = this
+          this.axios.post(this.biz.serverUrl + '/wechatpaper/toexaming',param,this.biz.urlencodedConfig)
+          .then(function (res) {
+              if(res.status == 200){          
+                that.submitpaper.paperId = res.data.paper.id
+                that.examList = res.data.questionList
+                // answers 
+                for (let index = 0; index < that.examList.length; index++) {
+                    let element = that.examList[index];
+                    if (element.questionType == 1 || element.questionType == 2 || element.questionType == 3) {
+                      element.answers = JSON.parse (element.answers)
+                    }
+                    if (element.questionType == 4) {
+                       let substr = "（？）"
+                       let newstr = '<i class="el-icon-edit" style="color:#0085d0;outline:none; min-width:60px;text-align:center;border-bottom:solid 1px" contenteditable="true"></i>'
+                       if (that.isContains(element.questionFill, substr)) {
+                          element.questionFill = element.questionFill.replace(/（？）/g, newstr)
+                          // console.log(element.questionFill)
+                       }
+                    }
+                    // element.answers = JSON.parse (element.answers)
+                }
+              }
+          }).catch(function (res) {
+              console.log(res)
+          })
+      },
+      // 填空题（？）
+      isContains(str, substr) {
+          return new RegExp(substr).test(str)
+      },
+      // 单选题 Radios
+        changeHandler(index,innerIndex) {
+            // console.log('改变之后的值是:' + value)
+            // console.log(this.questionList[index].radio)
+            // console.log(this.questionList)
+            // console.log( this.examList )
+        },
+        // 多选题 CheckBox
+        changeCheckBox(value) {
+            console.log(value) // true/false
+            // console.log( this.examList )
+        },
+        // 判断题
+        changeBoolen(value){
+            console.log(value) // true/false
+        },
+      // ok() {
+      //   this.$router.push({path: '/examResult'})
+      // },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          // 验证
+          for (var i = 0; i < this.examList.length; i++) {
+            var element = this.examList[i];
+            if (element.questionType == '1'|| element.questionType == '3') { // 单选题 && 判断题
+              if (element.radio == '100') {// this.$message.error({message: '第' + (i +1) + '题没有设置答案！'})
+                  Toast({
+                      message: '第' + (i +1) + '题没有设置答案！',
+                      position: 'top',
+                      duration: 3000
+                  })
+                  valid = false
+              }
+            }
+            if (element.questionType == '2') { // 多选题
+              let num = 0
+              // console.log( element.answers.length ) // 4
+              for (let i = 0; i < element.answers.length; i++) {
+                  let eleAns = element.answers[i];
+                  if (eleAns.checkbox) {
+                      num ++
+                  }
+              }
+              if (num == 0) {
+                  Toast({
+                        message: '第' + (i +1) + '题没有设置答案！',
+                        position: 'top',
+                        duration: 3000
+                  })
+                  valid = false
+              }else if (num < 2) {
+                Toast({
+                        message: '第' + (i +1) + '题至少设置2个答案！',
+                        position: 'top',
+                        duration: 3000
+                })
+                valid = false
+              }
+            }
+            if (element.questionType == '4') { // 简答题
+                let dlall = document.getElementsByTagName('dl')
+                // console.log( dlall.length )
+                let array = dlall[i].querySelectorAll(".el-icon-edit")
+                let answers = ''
+                for (let index = 0; index < array.length; index++) {
+                  let element = array[index]
+                  if (element.innerText == '') {
+                     Toast({
+                            message: '第' + (i +1) + '题没有输入答案！',
+                            position: 'top',
+                            duration: 3000
+                    })
+                    valid = false
+                  } 
+                }
+            }
+          }
+         
+          // console.log( this.examList )
+
+          if (valid) { // 提交试卷
+            this.submitpaperOnline()
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      submitpaperOnline(){
+        this.submitpaper.answerDetails = []
+        for (let index = 0; index < this.examList.length; index++) {
+            let element = this.examList[index]
+            // element.qnumber  
+            // element.radio
+            if (element.questionType == 1) { // 单选题
+              for (let i = 0; i < element.answers.length; i++) {
+                let eleAns = element.answers[i]
+                if (element.radio == parseInt( eleAns.lable )) {
+                  // eleAns.value
+                  this.submitpaper.answerDetails.push({
+                    qnumber: element.qnumber,
+                    answer: eleAns.value
+                  })
+                }
+              }
+              // 倒计时结束没有选择答案的
+              if(element.radio == 100){
+                this.submitpaper.answerDetails.push({
+                  qnumber: element.qnumber,
+                  answer: ''
+                })
+              }
+            }
+            if (element.questionType == 2) { // 多选题
+              let CheckBoxVal = ''
+              for (let i = 0; i < element.answers.length; i++) {
+                let eleAns = element.answers[i]
+                if ( eleAns.checkbox == true ) {
+                  CheckBoxVal +=  eleAns.value  + '（？）'
+                }
+              }
+              this.submitpaper.answerDetails.push({
+                qnumber: element.qnumber,
+                answer: CheckBoxVal
+              })
+            }
+            if (element.questionType == 3) { // 判断题
+              for (let i = 0; i < element.answers.length; i++) {
+                let eleAns = element.answers[i]
+                if (element.radio == parseInt( eleAns.lable )) {
+                  // eleAns.value
+                  this.submitpaper.answerDetails.push({
+                    qnumber: element.qnumber,
+                    answer: eleAns.value
+                  })
+                }
+              }
+              // 倒计时结束没有选择答案的
+              if(element.radio == 100){
+                this.submitpaper.answerDetails.push({
+                  qnumber: element.qnumber,
+                  answer: ''
+                })
+              }
+            }
+            if (element.questionType == 4) { // 填空题
+
+              let dlall = document.getElementsByTagName('dl')
+              // console.log( dlall.length )
+              let array = dlall[index].querySelectorAll(".el-icon-edit")
+              let answers = ''
+              for (let index = 0; index < array.length; index++) {
+                let element = array[index]
+                answers += "（？）" + element.innerText
+              }
+              // console.log(answers.substr(3))
+
+              // console.log( document.querySelector(".el-icon-edit").innerText )
+
+              this.submitpaper.answerDetails.push({
+                qnumber: element.qnumber,
+                answer: answers.substr(3)
+              })
+            }
+            if (element.questionType == 5) { // 主观题
+              this.submitpaper.answerDetails.push({
+                qnumber: element.qnumber,
+                answer: element.answers
+              })
+            }
+
+        }
+        // console.log( this.submitpaper.answerDetails )
+        // this.param = JSON.parse(this.param)
+        // this.submitpaper.employeeId = this.param.employeeId
+        this.submitpaper.answerDetails = JSON.stringify(this.submitpaper.answerDetails)
+
+        console.log(this.submitpaper)
+
+        let that = this
+        let param = qs.stringify(this.submitpaper)
+        
+        //  console.log(param)
+        // 提交试卷
+        this.axios.post(this.biz.serverUrl + '/wechatpaper/submitpaper',param,this.biz.urlencodedConfig)
+        .then(function (res) {
+            // console.log(that.param)
+            if (res.status == 200) {
+              that.$router.push({path: '/examResult',query:{param:that.param}})
+            }
+
+        }).catch(function (res) {
+            console.log(res)
+        })
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      // 倒计时
+      num:function (n) {
+          return n < 10 ? "0" + n : "" + n
+      },
+      add:function () {
+          var _this = this;
+          var time = window.setInterval(function () {
+
+             if (_this.seconds == '00' && _this.minutes != '00') {
+                  _this.seconds = 59
+                  _this.minutes -= 1
+              }else if(_this.minutes == '00' && _this.seconds == '00'){
+                  _this.seconds = 0
+                  window.clearInterval(time)
+                  Toast('考试时间到了，自动提交试卷')
+                  _this.submitpaperOnline()
+              }else{
+                  _this.seconds -= 1 
+              }
+
+          },1000)
+        }
+    },
+    watch:{
+        second:{
+            handler(newVal){
+                this.num(newVal)
+            }
+        },
+        minute:{
+            handler(newVal){
+                this.num(newVal)
+            }
+        }
+    },
+    computed:{
+        second:function () {
+            return this.num(this.seconds)
+        },
+        minute:function () {
+            return this.num(this.minutes)
+        }
+    }
+
+  }
+</script>

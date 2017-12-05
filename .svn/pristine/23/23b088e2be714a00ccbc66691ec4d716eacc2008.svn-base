@@ -1,0 +1,40 @@
+<template>
+  <div>
+      <div class="bg-gray"></div>
+      <section class="examResult relative center">
+          <img src="../../assets/bg-result.png" width="100%" alt="">
+          <div class="resultCon">
+              <h1>PowerPoint美化优化呈现优化技巧测试题</h1>
+              <p>娟娟的考试结果 <span>95/100</span></p>
+              <table cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                      <th>单选题</th>
+                      <th>多选题</th>
+                      <th>判断题</th>
+                      <th>填空题</th>
+                      <th>主观题</th>
+                      <th>总计</th>
+                  </tr>
+                  <tr>
+                      <td>30</td>
+                      <td>10</td>
+                      <td>30</td>
+                      <td>10</td>
+                      <td>15</td>
+                      <td>95</td>
+                  </tr>
+              </table>
+          </div>
+      </section>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.bg-gray{position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: -1;background-color:#f5f5f5}
+.resultCon{position: absolute;left: 0;right: 0;top: 0;bottom: 0;padding: 208/@r 62/@r 0 75/@r;}
+.resultCon h1{font-weight: normal;color: #424959;font-size: 48/@r;line-height: 60/@r;margin-bottom: 100/@r;}
+.resultCon p{font-size: 30/@r;margin-bottom: 190/@r;}
+.resultCon table{width: 500/@r;margin: 0 auto;color: #424959;font-size: 18/@r;line-height: 50/@r;border-left: solid 1px #76736f;}
+.resultCon table th{background-color: #424959;color: #f5f5f5;font-weight: normal;border-right: solid 1px #e9e5d8;}
+.resultCon table td{border-right: solid 1px #424959;border-bottom: solid 1px #76736f;}
+</style>

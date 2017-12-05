@@ -1,0 +1,269 @@
+<template>
+	<div id="yp-userPermission">
+    <el-col :span="24"><el-button type="primary" @click="addfirstLevelMenu">增加一级菜单</el-button></el-col>
+    <el-col :span="8" >
+    <el-tree
+      ref="tree"
+      :data="permissionTree"
+      :props="defaultProps"
+      node-key="id"
+      @node-click="handleNodeClick"
+      highlight-current
+      :expand-on-click-node="false"
+      show-checkbox
+      default-expand-all
+      @check-change="handleCheckChange"
+      :render-content="renderContent"
+
+    ></el-tree>
+    <el-button @click="getCheckedNodes">通过 node 获取</el-button>
+    <el-button @click="getCheckedKeys">通过 key 获取</el-button>
+    <el-button @click="setCheckedKeys">通过 key 设置</el-button>
+    </el-col>
+    <el-col :span="8" :offset="2">
+      <el-form   :model="permissionForm"  ref="form" label-width="80px">
+        <el-form-item label="资源类型">
+          <el-radio-group v-model="permissionForm.resourceType">
+            <el-radio label="1">菜单</el-radio>
+            <el-radio label="2">按钮</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="资源名称">
+          <el-input v-model="permissionForm.label" >
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="页面链接" >
+          <el-input v-model="permissionForm.url" >
+          </el-input>
+        </el-form-item>
+
+
+        <el-form-item label="资源标识">
+          <el-input v-model="permissionForm.permission" >
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="状态">
+          <el-switch on-text="启用" on-value="1" off-text="关闭" off-value="2" v-model="permissionForm.state"></el-switch>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">全部提交</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+
+      </el-form>
+    </el-col>
+
+    <el-dialog title="新增节点" :visible.sync="dialogFormVisible">
+      <el-form   :model="newPermissionForm"  ref="form" label-width="80px">
+        <el-form-item label="资源类型">
+          <el-radio-group v-model="newPermissionForm.resourceType">
+            <el-radio label="1">菜单</el-radio>
+            <el-radio label="2">按钮</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="资源名称">
+          <el-input v-model="newPermissionForm.label" >
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="页面链接" >
+          <el-input v-model="newPermissionForm.url" >
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="资源标识">
+          <el-input v-model="newPermissionForm.permission" >
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="状态">
+          <el-switch on-text="启用" on-value="1" off-text="关闭" off-value="2" v-model="newPermissionForm.state"></el-switch>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="append">立即创建</el-button>
+          <el-button @click="dialogFormVisible = false">取消</el-button>
+        </el-form-item>
+
+      </el-form>
+    </el-dialog>
+
+  </div>
+</template>
+<script>
+  var qs = require('qs');
+  let id = 1000;
+  export default {
+   // oid: parseInt(this.$route.query.id),
+    data: function () {
+      return {
+        dialogFormVisible:false,
+        tmpDialogData:{
+        },
+        permissionForm:{
+
+        },
+        newPermissionForm:{
+
+        },
+
+        permissionTree:[],
+        data: [{
+          id:'1',
+          label: '用户管理',
+          resourceType: '1',
+          url: 'baidu.com',
+          permission: 'baidu:list',
+          state: '1',
+          children: [
+            {
+            id:'2',
+            label: '用户添加',
+            resourceType: '1',
+            url: 'sina.com',
+            permission: 'sina',
+            state: '1',
+            children: [{
+              id:'3',
+              label: '添加按钮',
+              resourceType: '1',
+              url: '',
+              permission: '',
+              state: '1'
+            }]
+          },
+            {
+              id:'21',
+              label: '用户编辑',
+              children: [{
+                id:'22',
+                label: '编辑按钮'
+              }]
+            }
+
+          ]
+        }, {
+          id:'4',
+          label: '角色管理',
+          children: [{
+            id:'5',
+            label: '角色添加',
+            children: [{
+              id:'6',
+              label: '添加按钮'
+            }]
+          }, {
+            label: '二级 2-2',
+            children: [{
+              label: '三级 2-2-1'
+            }]
+          }]
+        }, {
+          label: '一级 3',
+          children: [{
+            label: '二级 3-1',
+            children: [{
+              label: '三级 3-1-1'
+            }]
+          }, {
+            label: '二级 3-2',
+            children: [{
+              label: '三级 3-2-1'
+            }]
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        }
+      }
+    },
+    created: function(){
+
+    },
+    mounted: function(){
+      this.initData();
+    },
+    methods: {
+      initData:function(){
+        this.find(this.oid);
+      },
+      addfirstLevelMenu(){
+        console.log("add first menu");
+        this.permissionTree.push({
+          id:id++,
+          label: '一级 3',
+          children: []
+          })
+      },
+      find: function(){
+        var that = this;
+        //debugger;
+        this.axios.post(this.biz.serverUrl+'/rest/permissionList').then(function(res){
+          //debugger;
+          that.permissionTree = res.data.datas;
+          //that.permissionTree = res.data.element;
+          console.log("that.form"+that.permissionTree);
+        }).catch(function(res){
+          console.log(res)
+        })
+      },
+      appendShow(store, data) {
+        this.dialogFormVisible = true;
+        this.tmpDialogData = {store:store,data:data};
+        this.newPermissionForm = {id: id++,  label: '新增子项', resourceType:'1', state:'1',addFlag:'1',children: [] };
+        //store.append({id: id++,  label: '新增子项', children: [] }, data);
+      },
+      append() {
+        this.dialogFormVisible = false;
+        this.tmpDialogData.store.append(this.newPermissionForm, this.tmpDialogData.data);
+      },
+
+      remove(store, data) {
+        store.remove(data);
+      },
+      renderContent(h, { node, data, store }) {
+        return (
+            <span>
+            <span>
+            <span>{node.label}</span>
+          </span>
+          <span style="float: right; margin-right: 20px">
+            <el-button size="mini" on-click={ () => this.appendShow(store, data) }>增加子项</el-button>
+          <el-button size="mini" on-click={ () => this.remove(store, data) }>删除</el-button>
+          </span>
+          </span>);
+      },
+      onSubmit:function(){
+        console.log('submit!');
+        console.log(this.data);
+      },
+
+      handleNodeClick:function(data, checked, indeterminate){
+        this.permissionForm = data;
+        console.log(data, checked, indeterminate);
+      },
+      handleCheckChange:function(data){
+        console.log(data);
+      },
+      getCheckedNodes:function() {
+        debugger;
+        console.log(this.$refs.tree.getCheckedNodes());
+      },
+      getCheckedKeys:function() {
+        console.log(this.$refs.tree.getCheckedKeys());
+      },
+      setCheckedKeys:function(){
+        this.$refs.tree.setCheckedKeys([3]);
+      }
+    }
+  }
+</script>
+<style>
+
+</style>

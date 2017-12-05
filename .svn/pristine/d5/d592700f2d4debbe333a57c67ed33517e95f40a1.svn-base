@@ -1,0 +1,28 @@
+<template>
+  <div class="bg-gray">
+    <img src="../../assets/survey.jpg" width="100%" alt="">
+    <section class="survey">
+      <ul>
+        <li class="border-radius5">
+          <h3>【调研问卷】业具体需求，调研学员水平学员&基础企业具体需求量身设计培训课程</h3>
+          <p>调研时间：2017-10-12 9:00 ~2017-10-12 18:00</p>
+          <div class="right"><a href="##">点击填写问卷</a></div>
+        </li>
+        <li class="border-radius5">
+          <h3>【调研问卷】业具体需求，调研学员水平学员&基础企业具体需求量身设计培训课程</h3>
+          <p>调研时间：2017-10-12 9:00 ~2017-10-12 18:00</p>
+          <div class="right"><a href="##">点击填写问卷</a></div>
+        </li>
+      </ul>
+    </section>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.bg-gray{height: 100%;}
+.survey{padding:20/@r 30/@r 0;}
+.survey ul li{background-color: #fff;padding:20/@r;border:solid 1px #e0e0e0;margin-bottom: 20/@r;}
+.survey h3{color: #1b1b1b;font-size: 32/@r;line-height: 42/@r;padding: 15/@r 0 5/@r;}
+.survey p{color: #989898;font-size: 24/@r;padding: 10/@r 0 20/@r;}
+.survey .right a{color: #3e3e3e;font-size: 30/@r;line-height: 34/@r;}
+</style>

@@ -1,0 +1,195 @@
+<template>
+    <div class="p15">
+        <el-tabs type="border-card">
+            <el-tab-pane label="试卷详情">
+                <div class="viewExam">
+                    <h1>PowerPoint美化优化呈现技巧培训测试题</h1>
+                    <h6>创建时间：2017-04-21</h6>
+                    <dl>
+                        <dt>1.在 PowerPoint 窗口中，用于添加幻灯片内容的主要区域是哪个区域？<span class="pl15">单选题 15分</span></dt>
+                        <dd>
+                            A.窗口左侧显示幻灯片缩略图的“幻灯片”选项卡<br>
+                            B.备注窗格<br>
+                            C.窗口中间的幻灯片窗格<br>
+                            D.使用“开始”选项卡中的“新建幻灯片”按钮
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>PowerPoint2007的视图包括____.<span class="pl15">多选题 15分</span></dt>
+                        <dd>
+                            A. 普通视<br>
+                            B.幻灯片浏览视图<br>
+                            C.备注视图<br>
+                            D.幻灯片放映视图
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>按F5键可进入“幻灯片放映”视图并从第一张幻灯片开始放映吗？</dt>
+                        <dd>
+                            A. 对   B.错
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>4.在功能区上的____下的____选项卡的位置可以找到插入声音文件的命令。<span class="pl15">填空题 8分、7分</span></dt>
+                    </dl>
+                    <dl>
+                        <dt>5.一般创建一份规范的PPT，通常包括几个逻辑组成部分？<span class="pl15">主观题 40分</span></dt>
+                    </dl>
+                    <div><el-button>关闭</el-button></div>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="试卷评分详情" class="paperSet">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" style="width:600px">
+                    <el-table :data="tableData">
+                        <el-table-column
+                            prop="type"
+                            label="题型">
+                        </el-table-column>
+                        <el-table-column
+                            prop="total"
+                            label="题数">
+                        </el-table-column>
+                        <el-table-column
+                            prop="totalScore"
+                            label="总分值">
+                        </el-table-column>
+                    </el-table>
+                    <el-form-item align="right">
+                        <span>卷面总计 100 分</span> 
+                    </el-form-item>
+                    <el-form-item align="right">
+                        及格分：
+                        <el-input style="width:80px" value = "60" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item align="right" class="pt20">
+                        <el-button  @click="">关闭</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="试卷设置">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="pt20" label-width="100px" style="width:600px">
+                    <el-form-item label="答题时段" prop="name">
+                        <el-date-picker
+                            v-model="value7"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="答题时长" prop="name">
+                        <el-input style="width:80px;" placeholder="分钟"></el-input>
+                    </el-form-item>
+                    <el-form-item label="发放方式" prop="name">
+                        <img src="../../assets/ewm.png" alt="">
+                    </el-form-item>
+                    <el-tag type="danger">提示：把二维码图片通过邮件/微信/手机QQ群发放给学员，学员扫一扫二维码或输入口令进入考试页面</el-tag>
+                </el-form>
+            </el-tab-pane>
+        </el-tabs>
+        
+  </div>
+</template>
+<style scoped>
+    /* .Single-answer,.Multiple-answer{padding-left:20px; } */
+    .Single-answer .el-form-item,.Multiple-answer .el-form-item{margin-bottom: 5px;}
+    .Single-answer .el-input,.Multiple-answer .el-input{width:50%;margin-right:10px;}
+    .Single-answer .el-input__inner,.Multiple-answer .el-input__inner{height: 30px}
+    .paperSet .el-form-item{margin-bottom: 0;}
+</style>
+
+<script>
+  export default {
+    data() {
+      return {
+        pickerOptions: {
+            shortcuts: [{
+                text: '最近一周',
+                onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                }
+            }, {
+                text: '最近一个月',
+                onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                }
+            }, {
+                text: '最近三个月',
+                onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                }
+            }]
+        },
+        value7: '',
+        tableData: [{
+            type: '单选题',
+            total: '1',
+            totalScore: '15'
+            }, {
+            type: '多选题',
+            total: '1',
+            totalScore: '15'
+            }, {
+            type: '填空题',
+            total: '1',
+            totalScore: '15'
+            }, {
+            type: '判断题',
+            total: '1',
+            totalScore: '15'
+            }, {
+            type: '简答题',
+            total: '1',
+            totalScore: '60'
+        }],
+        ruleForm: {
+          name: '',
+          desc: ''
+        },
+        ruleFormSecond:{
+            name: '',
+            score: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+        },
+        rulesSecond: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+        }
+      };
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  }
+</script>

@@ -1,0 +1,90 @@
+<template>
+  <div id="login">
+      <el-form :model="userForm" :rules="userRules" ref="userForm" label-width="80px">
+        <el-form-item label="账号" prop="username">
+          <el-input v-model="userForm.username" placeholder="请输入登录邮箱">
+            <template slot="append">@zhiruyi.com</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="userForm.password" placeholder="请输入密码">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <!-- <el-button type="primary" @click="userLogin">登录</el-button> -->
+          <el-button type="primary" @click="submitForm('userForm')">登录</el-button>
+          <el-button :plain="true" @click="reset('userForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+  </div>
+</template>
+<style scoped>
+  #login .el-form{
+    width:360px;
+    height: 200px;
+    background: #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: -180px 0 0 -230px;
+    border-radius: 12px;
+    -webkit-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -moz-border-radius: 12px;
+    padding:50px 65px 0 30px; 
+  }
+</style>
+<script>
+  var qs = require('qs')
+  var axios = require('axios')
+  export default {
+    name: 'login',
+    data: function () {
+      return {
+        userForm: {
+          username: '',
+          password: ''
+        },
+        userRules: {
+          username: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {min: 3, max: 5, message: '长度在 3 到 20 个字符', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'}
+          ]
+        }
+      }
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let that = this
+            let param = qs.stringify(this.userForm)
+            this.axios.post(this.biz.serverUrl + '/rest/restLogin', param, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+            .then(function(res){
+              // console.log(res);
+              if (res.data.status === -1) {
+                that.$message.error(res.data.msg)
+                return
+              } else {
+                sessionStorage.setItem('user', res.data.element)
+                that.$router.push({path: '/main'})
+              }
+            }).catch(function (res) {
+              alert(res)
+              console.log(res)
+            })
+          } else {
+            // console.log('error submit!!')
+            return false
+          }
+        });
+      },
+      reset: function (formName) {
+        this.$refs[formName].resetFields()
+      }
+    }
+  }
+</script>

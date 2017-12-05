@@ -1,0 +1,54 @@
+<template>
+  <div class="paperInfo">
+      <h1>{{ paper.name }}</h1>
+      <h6>本次考试要点如：{{ paper.tip }}</h6>
+      <ul>
+          <li><img src="../../assets/info-icon-01.png" alt=""><span>题目数量</span>{{ paper.sinSelection + paper.mulSelection + paper.judgement + paper.blankFill + paper.shorDiscuss }} 道</li>
+
+          <li><img src="../../assets/info-icon-02.png" alt=""><span>考试时长</span>{{ paper.duration }} 分钟</li>
+          <li><img src="../../assets/info-icon-03.png" alt=""><span>满分分数</span>{{ paper.score }} 分</li>
+          <li><img src="../../assets/info-icon-04.png" alt=""><span>及格分数</span>{{ paper.passScore }} 分</li>
+      </ul>
+      <a href="##" class="border-radius5 btn-ok " @click="exam">确定</a>
+  </div>
+</template>
+<style lang="less" scoped>
+@r:50rem;
+.paperInfo{padding: 0 45/@r 0 60/@r;}
+.paperInfo h1{color: #1a1a1a;font-size: 48/@r;line-height: 60/@r;padding-top: 96/@r;}
+.paperInfo h6{color: #999;font-size: 24/@r;line-height: 36/@r;padding: 44/@r 0 52/@r;}
+.btn-ok{height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;position: absolute;left: 35/@r;right: 35/@r; bottom: 92/@r;background: -webkit-linear-gradient(left, #0080cc, #00c0cc);background: linear-gradient(left, #0080cc, #00c0cc);}
+.paperInfo ul li{color: #0085d0;font-size: 30/@r;line-height:30/@r;margin-bottom: 48/@r;}
+.paperInfo ul li img{width: 30/@r;height: 30/@r;margin-right: 20/@r;}
+.paperInfo ul li span{margin-right: 20/@r;}
+</style>
+<script>
+export default {
+  data(){
+      return{
+        param: this.$route.query.param,
+        paper:''
+      }
+  },
+  mounted: function () {
+      this.findById(this.param)
+  },
+  methods: {
+      findById (param) {
+          let that = this
+          this.axios.post(this.biz.serverUrl + '/wechatpaper/getpaperinfo',param,this.biz.urlencodedConfig)
+          .then(function (res) {
+              if(res.status == 200){          
+                // console.log(res)
+                that.paper = res.data.paper
+              }
+          }).catch(function (res) {
+              console.log(res)
+          })
+      },
+      exam() {
+        this.$router.push({path: '/examOnline',query:{param:this.param}})
+      }
+  }
+}
+</script>

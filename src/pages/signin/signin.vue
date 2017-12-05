@@ -1,0 +1,157 @@
+<template>
+  <div id="signin" class="border-box">
+      <!-- <img src="../../assets/logo1.png" alt="" class="logo"> -->
+      <img src="../../assets/logo-sign.png" alt="" class="logo-sign">
+      <img src="../../assets/sign-icon.png" alt="" class="logo-icon">
+      <el-form :model="form" :rules="rules" class="form" ref="form">
+        <el-form-item class="input">
+          <span class="iconfont">&#xe699;</span>
+          <input type="text" placeholder="请输入员工姓名" v-model="form.employeeId">
+        </el-form-item>
+        <el-form-item class="input code">
+          <span class="iconfont">&#xe698;</span>
+          <input type="text" placeholder="请输入员工编号" v-model="form.employeeName">
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" class="button" @click="signin">提  交</el-button>
+  </div>
+</template>
+<style lang='less' scoped>
+  @r:50rem;
+  @font-face {
+      font-family: "iconfont";
+  }
+  .iconfont {
+      font-family: "iconfont";
+  }
+  #signin{
+    width: 100%;
+    height: 100vh;
+    background: url('../../assets/signin.jpg') no-repeat;
+    background-size:100% 100%;
+    position: relative;
+    text-align: center;
+    padding: 40/@r;
+    .logo{
+      margin-top: 130/@r;
+      width:40%;
+    }
+    .logo-sign{
+      width:167/@r;
+      height:46/@r;
+      right:26/@r;
+      top:26/@r;
+      position:absolute;
+    }
+    .logo-icon{
+      width:200/@r;
+      height:200/@r;
+      margin:206/@r auto 0;
+    }
+    .form{
+      margin-top:170/@r;
+      .input{
+        width: 83%;
+        margin: 0 auto;
+        position: relative;
+        line-height:80/@r;
+        .iconfont{
+          position: absolute;
+          left:30/@r;
+          bottom: 1px;
+          color:#0085D0;
+          font-size: 44/@r;
+        }
+      }
+      input{
+        width: 100%;
+        height: 80/@r;
+        background: none;
+        border-bottom: 1px solid #0085D0;
+        padding: 0 30/@r;
+        padding-left: 100/@r;
+        box-sizing: border-box;
+        outline:none;
+        font-size: 28/@r;
+      }
+      .code{
+        margin-top: 40/@r;
+      }
+    }
+    .button{
+        width:85%;
+        background: url("../../assets/enrolbg.png") no-repeat;
+        background-size:100% 100%;   
+        border-radius: 25px;    
+        font-size:32/@r; 
+        margin-top: 70/@r;
+    }
+  }
+</style>
+<script>
+  var qs = require('qs')
+  var axios = require('axios')
+  export default {
+    data: function () {
+      return {
+        form: {
+          employeeId: '',
+          employeeName: ''
+        },
+        flag:true,
+        rules: {
+          username: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            {min: 3, max: 5, message: '长度在 3 到 20 个字符', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: 'blur'}
+          ]
+        }
+      }
+    },
+    methods: {
+      signin() {
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            var that = this
+            this.form.signinId=this.$route.query.signinId
+            this.form.twoDimTime=this.$route.query.twoDimTime
+            var param = qs.stringify(this.form)   
+            if(this.flag){
+              this.axios.post(this.biz.serverUrl+'rest/signin/employeeSignin',param,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
+                  console.log(res)
+                  if(res.data.code == 200){
+                      that.$notify({
+                        message: '签到成功',
+                        duration:2000,
+                        type: 'success'
+                      });
+                      that.flag=false;
+                  }else{
+                    that.$notify({
+                      message: '签到失败',
+                      duration:2000,
+                      type: 'error'
+                    });
+                  }
+              }).catch(function (res) {
+                  console.log(res)
+              })   
+            }else{
+              that.$notify({
+                message: '已签到',
+                duration:2000,
+                type: 'warning'
+              });
+            }                  
+            // console.log(param)
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      }
+    }
+  }
+</script>
