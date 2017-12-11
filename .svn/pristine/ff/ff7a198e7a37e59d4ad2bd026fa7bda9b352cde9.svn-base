@@ -8,15 +8,15 @@
 
           <img src="../../assets/bg-result.png" width="100%" alt="">
           <div class="resultCon center">
-              <h1 class="">{{paper.name}}</h1>
+              <h1>{{paper.name}}</h1>
               <p><span class="name">{{answerResult.employeeName}}</span>的考试结果 <b>{{answerResult.totalScores}}</b><em>/{{paper.score}}</em></p>
               <table cellspacing="0" cellpadding="0" border="0">
                   <tr>
-                      <th width="16%">单选题</th>
-                      <th width="16%">多选题</th>
-                      <th width="16%">判断题</th>
-                      <th width="16%">填空题</th>
-                      <th width="16%">主观题</th>
+                      <th>单选题</th>
+                      <th>多选题</th>
+                      <th>判断题</th>
+                      <th>填空题</th>
+                      <th>主观题</th>
                       <th style="border-right:solid 1px #424959">总计</th>
                   </tr>
                   <tr>
@@ -51,7 +51,7 @@
 @r:50rem;
 .bg-gray{position: fixed;left: 0;top: 0;right: 0;bottom: 0;z-index: -1;background-color:#f5f5f5}
 .resultCon{position: absolute;left: 0;right: 0;top: 0;bottom: 0;padding: 200/@r 62/@r 0 75/@r;}
-.resultCon h1{font-weight: normal;color: #424959;font-size: 48/@r;height: 120/@r;max-height: 120/@r;line-height: 60/@r;margin-bottom: 90/@r;word-break: break-all;padding: 0 30/@r;}
+.resultCon h1{font-weight: normal;color: #424959;font-size: 48/@r;line-height: 60/@r;margin-bottom: 90/@r;word-break: break-all;}
 .resultCon p{font-size: 30/@r;margin-bottom: 180/@r;color: #a18367;}
 .resultCon table{width: 560/@r;margin: 0 auto;color: #424959;font-size: 18/@r;line-height: 50/@r;border-left: solid 1px #76736f;}
 .resultCon table th{background-color: #424959;color: #f5f5f5;font-weight: normal;border-right: solid 1px #e9e5d8;}
@@ -59,7 +59,7 @@
 .resultCon p .name{color: #424959;}
 .resultCon p b{color: #ca2121;font-size: 72/@r;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-weight: normal;letter-spacing: 2/@r;}
 .resultCon p em{color: #ca2121;font-size: 24/@r;}
-.lineS{margin: 80/@r 0 90/@r;border: solid .5px #999;position: relative;height: 0;line-height: 0;}
+.lineS{margin: 80/@r 0 90/@r;border: solid 1px #999;position: relative;height: 0;line-height: 0;}
 .lineS span{position: absolute;left: 50%;-webkit-transform: translateX(-50%); transform: translateX(-50%);color: #999;font-size: 24/@r;background-color: #f5f5f5;padding: 0 20/@r;display: block;height: 35/@r;line-height: 35/@r;top: -20/@r;}
 .wrongAnswer ul li{padding: 10/@r 40/@r 0;background-color:#fff;border-left: solid 10/@r #5d97d5;margin-bottom: 20/@r;}
 .wrongAnswer ul li h3{color: #4c4c4c;font-size: 30/@r;line-height: 48/@r;}

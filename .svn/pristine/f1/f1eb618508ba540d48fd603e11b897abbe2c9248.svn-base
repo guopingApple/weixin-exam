@@ -97,8 +97,8 @@
     data: function () {
       return {
         userForm: {
-          name: localStorage.name,
-          code: localStorage.code,
+          name: sessionStorage.name,
+          code: sessionStorage.code,
           // companyId:'',
           page:'1',
           rows:'1'

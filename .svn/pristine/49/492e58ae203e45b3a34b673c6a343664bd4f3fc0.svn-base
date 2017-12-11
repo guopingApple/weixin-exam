@@ -129,15 +129,15 @@ img{vertical-align: middle;}
     name: 'app',
     data: function () {
       return {
-        name: localStorage.name,
-        code: localStorage.code
+        name: sessionStorage.name,
+        code: sessionStorage.code
       }
     },
     methods: {
       // 子组件(login)将用户名传过来
       userSignIn(name,code){
-        localStorage.name = name
-        localStorage.code = code
+        sessionStorage.name = name
+        sessionStorage.code = code
       }
     }
   }

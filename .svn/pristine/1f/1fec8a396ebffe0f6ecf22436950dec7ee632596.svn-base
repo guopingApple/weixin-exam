@@ -6,22 +6,26 @@
               <p>报名时间:<span>{{details.enrolStartDate}}~{{details.enrolEndDate}}</span></p>
               <p>培训时间:<span>{{details.trainStartDate}}~{{details.trainEndDate}}</span></p>
               <p>报名地址:<span>{{details.enrolAddress}}</span></p>
-              <p>联系人:<span>{{details.contactMan}}</span></p>
-              <p>联系方式:<span>{{details.contactPhone}}</span></p>
+              <p>联系人:{{details.contactMan}}</p>
+              <p>联系方式:{{details.contactPhone}}</p>
               <p>报名条件:<span>{{details.enrolRequirement}}</span></p>
               <p>简介:</p>
           </div>       
       </header>
       <div class="content-box">
           <div class="content border-box">
-               {{details.courseDesc}}
+              {{details.courseDesc}}
              <!-- <p>人数限制35人，培训对象岗位必须是部门负责人。人数限制35人，培训对象岗位必须是部门负责人。人数限制35 人，培训对相岗位必须是部门负责人。</p>
              <img src="../../assets/1.png" alt="">
              <p>人数限制35人，培训对象岗位必须是部门负责人。人数限制35人，培训对象岗位必须是部门负责人。人数限制35 人，培训对相岗位必须是部门负责人。</p>
              <p>人数限制35人，培训对象岗位必须是部门负责人。人数限制35人，培训对象岗位必须是部门负责人。人数限制35 人，培训对相岗位必须是部门负责人。</p>
              <p>人数限制35人，培训对象岗位必须是部门负责人。人数限制35人，培训对象岗位必须是部门负责人。人数限制35 人，培训对相岗位必须是部门负责人。</p> -->
           </div>  
-      </div>       
+      </div>
+      
+      <div class="btn-box border-box">
+          <el-button type="primary" class="button" @click="enrol()">确认报名</el-button>  
+      </div>        
   </div>
 </template>
 <style lang="less" scoped>
@@ -98,7 +102,7 @@
             span{
                 display: inline-block;
                 vertical-align: top;
-                margin-left:10/@r;
+                max-width:78%;
             }
         }
     }
@@ -119,26 +123,51 @@
 </style>
 <script>
     import $ from 'jquery';
+    import qs from 'qs';
+    import axios from 'axios';
     export default{
         data() {
             return {
-                details:{}
+                details:{},
+
             }
         },
         mounted(){
-            
             this.detail()
         },
         methods:{
+            enrol(){
+                let that=this;
+                let arr={};
+                arr.employeeId=this.$route.query.employeeId
+                arr.enrolId=this.$route.query.enrolId
+                arr.startTime=this.details.enrolStartDate
+                arr.endTime=this.details.enrolEndDate
+                arr.createUSer=this.details.createUser
+                let param=qs.stringify(arr);
+                this.axios.post(this.biz.serverUrl+'rest/enrol/employeeEnrol',param,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
+                    console.log(res)
+                if(res.data.code == 200){
+                    that.$notify({
+                        message: '您的报名申请已提交',
+                        duration:2000,
+                        type: 'success'
+                    });
+                }
+                }).catch(function (res) {
+                    console.log(res)
+                })
+                
+            },
             detail(){
                 let that=this
-                let id=this.$route.query.id
+                let id=this.$route.query.enrolId
                 this.axios.get(this.biz.serverUrl+'rest/enrol/getEnrolById?id='+id,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
                     console.log(res)
                 if(res.data.code == 200){
                     that.details=res.data.element
                     that.$nextTick(function() {
-                        $(".content-box").height(document.documentElement.clientHeight-$("header").height());
+                        $(".content-box").height(document.documentElement.clientHeight-$("header").height()-50);
                     });
                 }
                 }).catch(function (res) {

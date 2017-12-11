@@ -12,11 +12,11 @@
               <p><span class="name">{{answerResult.employeeName}}</span>的考试结果 <b>{{answerResult.totalScores}}</b><em>/{{paper.score}}</em></p>
               <table cellspacing="0" cellpadding="0" border="0">
                   <tr>
-                      <th width="16%">单选题</th>
-                      <th width="16%">多选题</th>
-                      <th width="16%">判断题</th>
-                      <th width="16%">填空题</th>
-                      <th width="16%">主观题</th>
+                      <th>单选题</th>
+                      <th>多选题</th>
+                      <th>判断题</th>
+                      <th>填空题</th>
+                      <th>主观题</th>
                       <th style="border-right:solid 1px #424959">总计</th>
                   </tr>
                   <tr>

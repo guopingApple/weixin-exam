@@ -10,9 +10,9 @@
                             <img v-bind:src='o.coverPicUrl' class="image">                        
                             <div class="content-1">
                                 <p>培训期间每天正常签到时间为:</p>
-                                <p v-if='o.signTimeType==2'>上午:{{o.amStartTime}}~{{o.amEndTime}}<!-- <span class="iconfont normal">&#xe6f7;</span> --></p>
-                                <p v-if='o.signTimeType==2'>下午:{{o.pmStartTime}}~{{o.pmEndTime}}<!-- <span class="iconfont later">&#xe6f7;</span> --></p>
-                                <p v-if='o.signTimeType==1'>{{o.amStartTime}}~{{o.amEndTime}}<!-- <span class="iconfont later">&#xe6f7;</span> --></p>
+                                <p v-if='o.signTimeType==2'>上午:{{o.amStartTime}}~{{o.amEndTime}}<span class="iconfont normal">&#xe6f7;</span></p>
+                                <p v-if='o.signTimeType==2'>下午:{{o.pmStartTime}}~{{o.pmEndTime}}<span class="iconfont later">&#xe6f7;</span></p>
+                                <p v-if='o.signTimeType==1'>{{o.amStartTime}}~{{o.amEndTime}}<span class="iconfont later">&#xe6f7;</span></p>
                             </div>
                         </div>
                         <div>
@@ -29,21 +29,14 @@
             <div class="signinDetail">
                 <h6>查看签到详情</h6>               
                 <div class="content-2">
-                    <p v-if='details.signTimeType==1'>正常签到时间:<span style="color:#0085d0;">{{details.amStartTime}}~{{details.amEndTime}}</span></p>
-                    <p  v-if='details.signTimeType==2'>正常签到时间:</p>
-                    <p v-if='details.signTimeType==2' style='color:#0085d0;' class="padding">
-                        <span>上午:{{details.amStartTime}}~{{details.amEndTime}}</span></br>
-                        <span>下午:{{details.pmStartTime}}~{{details.pmEndTime}}</span>
-                    </p>
-                    <p class="title-1">您培训期间需要签到{{num}}次，您已签到{{numed}}次:</p>
+                    <p style="color:#0085d0;">正常签到时间:<span>08:00~08:30</span></p>
+                    <!-- <p>正常签到时间:</p>
+                    <p style='color:#0085d0'><span>上午:08:00~08:30 </span><span>下午:05:00~05:30</span></p> -->
+                    <p class="title-1">您培训期间需要签到6次，您已签到4次:</p>
                     <div class="signin">
                         <div class="signind-1">
-                            <p v-for='(item,index) in details.log' :key='index'>
-                                {{item.createTime}}
-                                <span class="later" v-if='item.status==2'>迟到</span>
-                                <span class="normal"  v-if='item.status==1'>正常</span>
-                            </p>
-                            <!-- <p>2017-10-14 13:12:12<span class="normal">正常</span></p> -->
+                            <p>2017-10-14 09:34:12<span class="later">迟到</span></p>
+                            <p>2017-10-14 13:12:12<span class="normal">正常</span></p>
                         </div>
                     </div>
                 </div>
@@ -66,6 +59,7 @@
     .container{
         width:100%;
         min-height:100%;
+        padding: 20/@r 30/@r 0;
         box-sizing: border-box;
         background-color: #EBEBEB;
     }
@@ -77,9 +71,7 @@
         margin-top:20/@r;
         line-height: 28/@r;
     }
-    .loadmores{
-        padding: 20/@r 30/@r 0;
-    }
+
     .button {
         padding: 0;
         float: right;
@@ -167,9 +159,6 @@
             font-size: 32/@r;
             color:#3E3E3E;
         }
-        .padding{
-            padding-left:50/@r;
-        }
         .title-1{
             margin-top:15/@r;
         }
@@ -233,9 +222,6 @@
       return {
         tableData:[],
         qrcode:'',
-        details:{},
-        num:0,
-        numed:0,
         t:null,
         bottomAllLoaded: false, // 是否可以上拉属性，false可以上拉，true为禁止上拉，就是不让往上划加载数据了
         scrollMode:"auto", // 移动端弹性滚动效果，touch为弹性滚动，auto是非弹性滚动
@@ -263,33 +249,33 @@
             $(".content-2").show();          
             $(".signinDetail").css("animation","mymove .5s"); 
             let that=this;
-            // let param=qs.stringify(arr)
-            this.axios.post(this.biz.serverUrl+'rest/signin/'+id+'/'+this.employeeId,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
+            let arr={}
+            arr.employeeId='123456';
+            arr.employeeName='12346';
+            arr.twoDimTime='312654';
+            arr.signinId=id;
+            let param=qs.stringify(arr)
+            this.axios.post(this.biz.serverUrl+'rest/signin/employeeSignin',param,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
                 console.log(res)
                 if(res.data.code == 200){
-                    that.details=res.data.element
-                    that.numed=that.details.log.length
+                    that.tableData=res.data.datas
                     // console.log(that.tableData)
                     // //   that.pageSize=res.data.fsp.pageSize      //每页的条数
                     // that.pageCount=res.data.fsp.pageCount      //页总数
                     // that.currentPage=res.data.fsp.page        //当前页
-                    that.details.log.forEach(function(v,i){                   
-                        let time=new Date(that.details.log[i].createTime)
-                        that.details.log[i].createTime=that.getTimer(time)
-                    })
-                    
+                    // that.tableData.forEach(function(v,i){                   
+                    //     let time=new Date(that.tableData[i].createTime)
+                    //     that.tableData[i].createTime=that.getTimer(time)
+                    // })
+                    if(that.totalpage == 1){
+                        that.allLoaded = true
+                        that.scrollMode = "touch"
+                        that.bottomText =  '已加载全部数据'
+                    }
                 }
             }).catch(function (res) {
                 console.log(res)
-            })  
-            this.axios.post(this.biz.serverUrl+'rest/signin/'+id+'/getSigninTimes',{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
-                console.log(res)
-                if(res.data.code == 200){
-                    that.num=res.data.element
-                }
-            }).catch(function (res) {
-                console.log(res)
-            })          
+            })           
         },
         ewm:function(id){
             $("#detail").show();           
@@ -333,10 +319,16 @@
                 that.tableData=res.data.datas
                 that.page=res.data.fsp.page
                 that.totalpage = res.data.fsp.pageCount
-                if(that.totalpage == 1){
-                    that.allLoaded = true
-                    that.scrollMode = "touch"
-                    that.bottomText =  '已加载全部数据'
+                if(that.page == that.totalpage){
+                    that.bottomText = '全部加载完成'
+                    that.bottomAllLoaded = true;
+                    Toast({
+                        message: '全部加载完成',
+                        duration: 3000
+                    })
+                    let ele = document.querySelector('.mint-loadmore-bottom')
+                    ele.style.display='none'
+                    // console.log(ele)
                 }
             }
             }).catch(function (res) {

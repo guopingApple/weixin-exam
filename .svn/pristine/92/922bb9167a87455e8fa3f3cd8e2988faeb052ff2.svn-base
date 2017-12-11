@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view @userSignIn="userSignIn"></router-view>
+    <router-view></router-view>
   </div>
 </template>
 <style lang="less">
@@ -68,7 +68,6 @@ img{vertical-align: middle;}
     font-size:28/@r;
     margin:0;
 }
-.examResult .mint-loadmore-bottom{ margin-bottom:-50px}
 .examResult .mint-loadmore-bottom{font-size:16/@r}
 .examOnline .el-alert{position:fixed;top:0;right:0;opacity: .85;border-radius:0;text-align:center}
 .examOnline .el-alert__content{margin:0 auto;}
@@ -124,21 +123,3 @@ img{vertical-align: middle;}
 /* less 1px border end */
 </style>
 
-<script>
-  export default {
-    name: 'app',
-    data: function () {
-      return {
-        name: localStorage.name,
-        code: localStorage.code
-      }
-    },
-    methods: {
-      // 子组件(login)将用户名传过来
-      userSignIn(name,code){
-        localStorage.name = name
-        localStorage.code = code
-      }
-    }
-  }
-</script>

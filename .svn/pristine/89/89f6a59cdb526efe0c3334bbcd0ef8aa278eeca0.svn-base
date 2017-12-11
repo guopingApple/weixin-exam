@@ -10,9 +10,9 @@
                             <img v-bind:src='o.coverPicUrl' class="image">                        
                             <div class="content-1">
                                 <p>培训期间每天正常签到时间为:</p>
-                                <p v-if='o.signTimeType==2'>上午:{{o.amStartTime}}~{{o.amEndTime}}<!-- <span class="iconfont normal">&#xe6f7;</span> --></p>
-                                <p v-if='o.signTimeType==2'>下午:{{o.pmStartTime}}~{{o.pmEndTime}}<!-- <span class="iconfont later">&#xe6f7;</span> --></p>
-                                <p v-if='o.signTimeType==1'>{{o.amStartTime}}~{{o.amEndTime}}<!-- <span class="iconfont later">&#xe6f7;</span> --></p>
+                                <p v-if='o.signTimeType==2'>上午:{{o.amStartTime}}~{{o.amEndTime}}<span class="iconfont normal">&#xe6f7;</span></p>
+                                <p v-if='o.signTimeType==2'>下午:{{o.pmStartTime}}~{{o.pmEndTime}}<span class="iconfont later">&#xe6f7;</span></p>
+                                <p v-if='o.signTimeType==1'>{{o.amStartTime}}~{{o.amEndTime}}<span class="iconfont later">&#xe6f7;</span></p>
                             </div>
                         </div>
                         <div>
@@ -66,6 +66,7 @@
     .container{
         width:100%;
         min-height:100%;
+        padding: 20/@r 30/@r 0;
         box-sizing: border-box;
         background-color: #EBEBEB;
     }
@@ -77,9 +78,7 @@
         margin-top:20/@r;
         line-height: 28/@r;
     }
-    .loadmores{
-        padding: 20/@r 30/@r 0;
-    }
+
     .button {
         padding: 0;
         float: right;
@@ -263,10 +262,11 @@
             $(".content-2").show();          
             $(".signinDetail").css("animation","mymove .5s"); 
             let that=this;
-            // let param=qs.stringify(arr)
+            let param=qs.stringify(arr)
             this.axios.post(this.biz.serverUrl+'rest/signin/'+id+'/'+this.employeeId,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (res) {
                 console.log(res)
                 if(res.data.code == 200){
+
                     that.details=res.data.element
                     that.numed=that.details.log.length
                     // console.log(that.tableData)

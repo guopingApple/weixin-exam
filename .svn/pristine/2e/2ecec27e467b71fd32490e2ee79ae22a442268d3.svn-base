@@ -35,7 +35,8 @@
     @r:50rem;
     .container{
         width:100%;
-        min-height:100%;       
+        min-height:100%;
+        
         box-sizing: border-box;
         background-color: #EBEBEB;
     }

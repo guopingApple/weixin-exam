@@ -4,9 +4,9 @@
       <img src="../../assets/exam.jpg" alt="" class = "img-exam">
       <section class="examList relative" :style="{ '-webkit-overflow-scrolling': scrollMode,'height': wrapperHeight + 'px'}" ref="wrapper">
         
-        <img src="../../assets/none.png" alt="" class="none" v-if = 'isShow'>
+        <img src="../../assets/none.png" alt="" class="none" v-show = 'examList.length == 0'>
 
-        <v-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" :bottomPullText='bottomText' :bottomLoadingText = 'bottomLoadingText' @bottom-status-change="handlebottomChange" :bottomDistance = '70' style="min-height:100%;" v-else > 
+        <v-loadmore  :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false" ref="loadmore" :bottomPullText='bottomText' :bottomLoadingText = 'bottomLoadingText' @bottom-status-change="handlebottomChange" :bottomDistance = '70' style="min-height:100%;" v-if = 'examList.length != 0'> 
 
                 <div v-if ='latest.length != 0' >
                     <h3><img src="../../assets/data.png" alt="">{{currYear}}下半年</h3>
@@ -93,8 +93,7 @@ export default {
             bottomDropText:'释放更新',
             bottomLoadingText:'加载中...',
             wrapperHeight: 0,
-            bottomStatus:'',
-            isShow:false
+            bottomStatus:''
         }
     },
     mounted: function () {
@@ -142,10 +141,6 @@ export default {
                         that.latest.push ( that.examList[i] ) 
                     }
                 })
-
-                if (that.examList.length == 0) {
-                    this.isShow = true
-                }
 
             }).catch(function (res) {
                 console.log(res)
