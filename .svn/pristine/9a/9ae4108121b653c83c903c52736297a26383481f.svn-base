@@ -168,18 +168,16 @@ import { MessageBox } from 'mint-ui'
           for (var i = 0; i < this.examList.length; i++) {
             var element = this.examList[i];
             if (element.questionType == '1'|| element.questionType == '3') { // 单选题 && 判断题
-              if (element.isRequiredB) { // 必答题
-                if (element.radio == '100') {// this.$message.error({message: '第' + (i +1) + '题没有设置答案！'})
-                    Toast({
-                        message: '第' + (i +1) + '题没有设置答案！',
-                        position: 'top',
-                        duration: 3000
-                    })
-                    valid = false
-                }
+              if (element.radio == '100') {// this.$message.error({message: '第' + (i +1) + '题没有设置答案！'})
+                  Toast({
+                      message: '第' + (i +1) + '题没有设置答案！',
+                      position: 'top',
+                      duration: 3000
+                  })
+                  valid = false
               }
             }
-            if (element.questionType == '2' && element.isRequiredB) { // 多选题
+            if (element.questionType == '2') { // 多选题
               let num = 0
               // console.log( element.answers.length ) // 4
               for (let i = 0; i < element.answers.length; i++) {
@@ -204,7 +202,7 @@ import { MessageBox } from 'mint-ui'
                 valid = false
               }
             }
-            if (element.questionType == '4' && element.isRequiredB) { // 填空题
+            if (element.questionType == '4') { // 简答题
                 let dlall = document.getElementsByTagName('dl')
                 // console.log( dlall.length )
                 let array = dlall[i].querySelectorAll(".el-icon-edit")
@@ -219,16 +217,6 @@ import { MessageBox } from 'mint-ui'
                     })
                     valid = false
                   } 
-                }
-            }
-            if (element.questionType == '5' && element.isRequiredB) { // 简答题
-                if (element.answers == '') {
-                  Toast({
-                      message: '第' + (i +1) + '题没有输入答案！',
-                      position: 'top',
-                      duration: 3000
-                  })
-                  valid = false
                 }
             }
           }
@@ -260,7 +248,7 @@ import { MessageBox } from 'mint-ui'
                   })
                 }
               }
-              // 倒计时结束没有选择答案的 && 非必答题没有答案的
+              // 倒计时结束没有选择答案的
               if(element.radio == 100){
                 this.submitpaper.answerDetails.push({
                   qnumber: element.qnumber,
@@ -292,7 +280,7 @@ import { MessageBox } from 'mint-ui'
                   })
                 }
               }
-              // 倒计时结束没有选择答案的 && 非必答题没有答案的
+              // 倒计时结束没有选择答案的
               if(element.radio == 100){
                 this.submitpaper.answerDetails.push({
                   qnumber: element.qnumber,
