@@ -66,9 +66,19 @@ axios.interceptors.response.use(
   });
 router.beforeEach((to, from, next)=>{
 
-  // console.log('22222'+localStorage.name)
-  
- if(localStorage.name){
+  //var userJson = sessionStorage.user;
+  //debugger;
+//重新转换为对象
+//  try {
+//   // var currentUser = JSON.parse(userJson);
+//  }catch (e){
+//    console.log(e);
+//  }
+  // console.log(router.app)
+  if(router.app.$store.state.user.name){
+    document.title = to.meta.title
+    next()
+  }else if(sessionStorage.user){
     document.title = to.meta.title
     next()
   }

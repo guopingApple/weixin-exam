@@ -151,7 +151,7 @@
       changeOptions(value){
         console.log(this.userForm.companyId)
       },
-      userLogin(formName) { 
+      userLogin(formName) {
         this.$refs['userForm'].validate((valid) => {
           if (valid) {
             var that = this
@@ -176,7 +176,6 @@
                   that.$router.push({path: '/personInfo',query:{id:id,element:res.data.element}})
                 }else{
                   sessionStorage.setItem("person",'true')
-                  // that.$router.push({path: '/main'})
                   that.$router.push({path: '/main',query:{id:id,qrcode:that.userForm.code}})
                   console.log('员工id----' + id)
                 }

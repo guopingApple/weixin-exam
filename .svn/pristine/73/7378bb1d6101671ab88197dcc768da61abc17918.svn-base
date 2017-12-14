@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [
-    {path:'/login', component:require('../pages/login.vue'), meta:{title:'登录'}},   
+    {path:'/', component:require('../pages/login.vue'), meta:{title:'登录'}},   
     {path:'/main', component:require('../pages/main.vue'), meta:{title:'首页'}},
     {path:'/personInfo', component:require('../pages/personInfo/list.vue'), meta:{title:'个人信息'}},
     {path:'/surveyList', component:require('../pages/survey/list.vue'), meta:{title:'调研问卷列表'}},
@@ -17,8 +17,8 @@ const router = new VueRouter({
     {path:'/surveyOnline', component:require('../pages/survey/surveyOnline.vue'), meta:{title:'在线调研'}},
 
     {path:'/examOnline', component:require('../pages/exam/examOnline.vue'), meta:{title:'在线考试'}},
-    {path:'/examList', component:require('../pages/exam/list.vue'), meta:{title:'在线考试'}},
-    {path:'/examListNone', component:require('../pages/exam/listNone.vue'), meta:{title:'暂无考试'}},
+    {path:'/examList', component:require('../pages/exam/list.vue'), meta:{title:'课程列表'}},
+    {path:'/examListNone', component:require('../pages/exam/listNone.vue'), meta:{title:'暂无课程列表'}},
     {path:'/examResult', component:require('../pages/exam/result.vue'), meta:{title:'考试结果'}},
     {path:'/paperInfo', component:require('../pages/exam/paperInfo.vue'), meta:{title:'考试课程信息'}},
 
@@ -44,31 +44,39 @@ const router = new VueRouter({
 //  });
 axios.interceptors.response.use(
   response => {
-    console.log('拦截输出,登陆未过期>>>>>>>>>>>>>>>>>>>>>>>>>>>>',response)
-    return response;
+    return response
   },
   error => {
-    console.log('拦截成功,登录过期>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',error.response)
     if (error.response) {
       switch (error.response.status) {
         case 401:
           // 返回 401 清除token信息并跳转到登录页面
-          //store.commit(types.LOGOUT);
+          // store.commit(types.LOGOUT);
           router.replace({
             path: 'login',
             query: {redirect: router.currentRoute.fullPath}
           })
-          //console.log("401 lelele");
+          // console.log("401 lelele");
          // window.location.href = 'https://testcas.zhiruyi.cn:8443/cas/login?service=http://localhost:8080/shiro-cas'
       }
     }
-     return Promise.reject(error.response.data)   // 返回接口返回的错误信息
-  });
-router.beforeEach((to, from, next)=>{
+    return Promise.reject(error.response.data)   // 返回接口返回的错误信息
+  })
+/*router.beforeEach((to, from, next)=>{
 
-  // console.log('22222'+localStorage.name)
-  
- if(localStorage.name){
+  //var userJson = sessionStorage.user;
+  //debugger;
+//重新转换为对象
+//  try {
+//   // var currentUser = JSON.parse(userJson);
+//  }catch (e){
+//    console.log(e);
+//  }
+
+  if(router.app.$store.state.user.name){
+    document.title = to.meta.title
+    next()
+  }else if(sessionStorage.user){
     document.title = to.meta.title
     next()
   }
@@ -80,11 +88,11 @@ router.beforeEach((to, from, next)=>{
       next()
     }
   }
-})
+})*/
 // 路由全局钩子
-// router.beforeEach((to, from, next) => {
-//   // router.app.$store.commit('setPageInf',{title:to.meta.title});
-//   document.title = to.meta.title
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  // router.app.$store.commit('setPageInf',{title:to.meta.title});
+  document.title = to.meta.title
+  next()
+})
 export default router

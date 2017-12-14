@@ -41,7 +41,7 @@ export default {
   methods: {
       findById (param) {
           let that = this
-          this.axios.post(this.biz.serverUrl + 'wechatpaper/getpaperinfo',param,this.biz.urlencodedConfig)
+          this.axios.post(this.biz.serverUrl + '/wechatpaper/getpaperinfo',param,this.biz.urlencodedConfig)
           .then(function (res) {
               if(res.status == 200){          
                 // console.log(res)

@@ -137,7 +137,7 @@
       companyList(){
         let that = this
         let param = qs.stringify({'page':'1','rows': '10000'})
-        this.axios.post(this.biz.serverUrl + 'rest/web/companyList',param, this.biz.urlencodedConfig)
+        this.axios.post(this.biz.serverUrl + '/rest/web/companyList',param, this.biz.urlencodedConfig)
         .then(function(res){
           // console.log(res);
           if (res.data.code == '200') {
@@ -151,15 +151,15 @@
       changeOptions(value){
         console.log(this.userForm.companyId)
       },
-      userLogin(formName) { 
+      userLogin(formName) {
         this.$refs['userForm'].validate((valid) => {
           if (valid) {
             var that = this
             var param = qs.stringify(this.userForm)
-            // console.log(param)
+            console.log(param)
             // that.$router.push({path: '/main'})
 
-            this.axios.post(this.biz.serverUrl + 'rest/web/login', param, this.biz.urlencodedConfig)
+            this.axios.post(this.biz.serverUrl + '/rest/web/login', param, this.biz.urlencodedConfig)
             .then(function(res){
               // console.log(res);
               if (res.data.status == '200') {
@@ -168,15 +168,12 @@
                 
                 let id = res.data.element.id // 员工id
 
-                sessionStorage.setItem('employeeId',id)
-
                 // that.$router.push({path: '/personInfo',query:{id:id,element:res.data.element}})
                 
                 if (res.data.element.code =='' || res.data.element.name =='' || res.data.element.gender =='' || res.data.element.department =='') {
                   that.$router.push({path: '/personInfo',query:{id:id,element:res.data.element}})
                 }else{
                   sessionStorage.setItem("person",'true')
-                  // that.$router.push({path: '/main'})
                   that.$router.push({path: '/main',query:{id:id,qrcode:that.userForm.code}})
                   console.log('员工id----' + id)
                 }

@@ -28,46 +28,22 @@ export default {
   data(){
       return{
         param: this.$route.query.param,
-        // employeeId: this.$route.query.employeeId,// 员工id
-        employeeId:sessionStorage.getItem('employeeId'),// 员工id
+        employeeId: this.$route.query.employeeId,// 员工id
         paper:''
       }
   },
   mounted: function () {
       console.log('员工id----' +  this.employeeId )
-    //   console.log('员工id----' +  sessionStorage.getItem('employeeId') )
       this.findById(this.param)
   },
   methods: {
       findById (param) {
           let that = this
-          this.axios.post(this.biz.serverUrl + 'wechatpaper/getpaperinfo',param,this.biz.urlencodedConfig)
+          this.axios.post(this.biz.serverUrl + '/wechatpaper/getpaperinfo',param,this.biz.urlencodedConfig)
           .then(function (res) {
               if(res.status == 200){          
                 // console.log(res)
-                if (res.data.isExam) {// 已考试
-                        that.$router.push({path: '/examResult',query:{param:param}})
-                }else{// 未考试
-                    if(res.data.hasPaper){ // 试卷存在
-                        
-                        if (!res.data.canExam) { // 能不能考试
-                            MessageBox('提示', '不能考试')
-                            MessageBox.alert('不能考试').then(action => {
-                                // that.$router.go(-1)
-                                that.$router.push({path: '/examList'})
-                            })
-                        }else{
-                            that.paper = res.data.paper
-                        }
-                    }else{
-                        MessageBox('提示', '超过考试时间！')
-                        MessageBox.alert('超过考试时间！').then(action => {
-                            // that.$router.go(-1)
-                            that.$router.push({path: '/examList'})
-                        })
-                    }
-                }
-                // that.paper = res.data.paper
+                that.paper = res.data.paper
               }
           }).catch(function (res) {
               console.log(res)

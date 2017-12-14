@@ -115,7 +115,7 @@ import { MessageBox } from 'mint-ui'
     methods: {
       findById (param) {
           let that = this
-          this.axios.post(this.biz.serverUrl + 'wechatpaper/toexaming',param,this.biz.urlencodedConfig)
+          this.axios.post(this.biz.serverUrl + '/wechatpaper/toexaming',param,this.biz.urlencodedConfig)
           .then(function (res) {
               if(res.status == 200){          
                 that.submitpaper.paperId = res.data.paper.id
@@ -341,7 +341,7 @@ import { MessageBox } from 'mint-ui'
         
         //  console.log(param)
         // 提交试卷
-        this.axios.post(this.biz.serverUrl + 'wechatpaper/submitpaper',param,this.biz.urlencodedConfig)
+        this.axios.post(this.biz.serverUrl + '/wechatpaper/submitpaper',param,this.biz.urlencodedConfig)
         .then(function (res) {
             // console.log(that.param)
             if (res.status == 200) {
