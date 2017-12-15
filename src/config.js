@@ -8,7 +8,7 @@ const config = {
   // serverUrl:'http://192.168.1.34:8080',
   // serverUrl: 'http://192.168.1.32:8080',
   serverUrl: 'http://47.93.26.6:8081/',
-  // serverUrl: 'http://192.168.1.57:8081/',
+  // serverUrl: 'http://192.168.1.14:8081/',
   urlencodedConfig: {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
 }
 export default config
