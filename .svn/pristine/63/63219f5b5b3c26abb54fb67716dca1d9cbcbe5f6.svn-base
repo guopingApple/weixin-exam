@@ -127,8 +127,6 @@ export default {
                     that.allLoaded = true
                     that.scrollMode = "touch"
                     that.bottomText =  '已加载全部数据'
-                    let ele = document.querySelector('.mint-loadmore-bottom')
-                    ele.style.display='none'
                 }
                 // 时间
                 that.examList.forEach(function(v,i){                   

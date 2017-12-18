@@ -50,7 +50,7 @@ axios.interceptors.request.use(function (config) {
   if (spli[spli.length-1] == 'login') { 
       return config
     }else{
-      if (localStorage.name != null) {
+      if (localStorage.getItem('name') != null) {
            return config
         }else{
 
