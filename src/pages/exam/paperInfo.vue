@@ -18,7 +18,7 @@
 .paperInfo h1{color: #1a1a1a;font-size: 48/@r;line-height: 60/@r;padding-top: 96/@r;}
 .paperInfo h6{color: #999;font-size: 24/@r;line-height: 36/@r;padding: 44/@r 0 52/@r;}
 .btn-ok{height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;position: absolute;left: 35/@r;right: 35/@r; bottom: 92/@r;background:url(../../assets/btn-ok.png) no-repeat;background-size:100% 100%;}
-// .btn-ok{height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;position: absolute;left: 35/@r;right: 35/@r; bottom: 92/@r;background:-webkit-linear-gradient(left, #0080cc, #00c0cc);background: linear-gradient(left, #0080cc, #00c0cc);}
+// .btn-ok{height: 70/@r;line-height: 70/@r;text-align: center;color: #fff;font-size: 30/@r;position: absolute;left: 35/@r;right: 35/@r; bottom: 92/@r;background:-webkit-linear-gradient(left, #0080cc, #00c0cc);background: linear-gradient(left, #0080cc, #00c0cc);}089fff 2dcbff
 .paperInfo ul li{color: #0085d0;font-size: 30/@r;line-height:30/@r;margin-bottom: 48/@r;}
 .paperInfo ul li img{width: 30/@r;height: 30/@r;margin-right: 20/@r;}
 .paperInfo ul li span{margin-right: 20/@r;}

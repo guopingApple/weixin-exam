@@ -12,11 +12,10 @@
                     <h3><img src="../../assets/data.png" alt="">{{currYear}}下半年</h3>
                     <div class='center f16' v-if ='latest.length == 0'>暂无下半年数据</div>
                     <ul>
-                        <li class="" v-for="(item,index) in latest" @click="exam(item.id)">
+                        <li class="lineTop lineBottom" v-for="(item,index) in latest" @click="exam(item.id)">
                             <h2>{{ item.name }}</h2> 
                             <p>{{ item.startTime }} 至 {{ item.endTime }}</p>
-                            <div class = 'goto'>点击进入考试 >></div>
-                            <!-- <span></span> -->
+                            <span></span>
                         </li>
                     </ul>
                 </div>
@@ -24,12 +23,11 @@
                 <div v-if ='half.length != 0' >
                     <h3><img src="../../assets/data.png" alt="">{{currYear}}上半年</h3>
                     <ul>
-                        <li class="" v-for="(item,index) in half" @click="exam(item.id)">
+                        <li class="lineTop lineBottom" v-for="(item,index) in half" @click="exam(item.id)">
                             <h2>{{ item.name }}</h2>
                             <!-- <p>{{ item.createTime }}</p> -->
                             <p>{{ item.startTime }} 至 {{ item.endTime }}</p>
-                            <div class = 'goto'>点击进入考试 >></div>
-                            <!-- <span></span> -->
+                            <span></span>
                         </li>
                     </ul>
                 </div>
@@ -49,9 +47,7 @@
 // .examList{z-index:1;}
 .examList h3{height: 60/@r;line-height: 60/@r;color: #0085d0;font-size: 24/@r;padding:0 40/@r;}
 .examList h3 img{width: 19/@r;height: 19/@r;margin-right: 10/@r;position: relative;top: -4/@r;}
-.examList ul{padding:0 20/@r;}
-.examList ul li{padding: 20/@r;background-color:#fff;margin-bottom: 20/@r;-webkit-border-radius:8/@r; border-radius:8/@r;}
-.examList ul li .goto{ text-align:right;font-size:24/@r;padding:15/@r 0 5/@r;color:#333;}
+.examList ul li{padding: 20/@r 180/@r 0 40/@r;background-color:#fff;margin-bottom: 20/@r;}
 .examList ul li:last-child{margin-bottom: 0;}
 .examList ul li h2{color: #4c4c4c;font-size: 30/@r;line-height: 42/@r;font-weight: normal;}
 .examList ul li p{color: #999;font-size: 24/@r;line-height: 56/@r;}
