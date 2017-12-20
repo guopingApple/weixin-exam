@@ -107,9 +107,9 @@
                     nation: [
                         { required: true, message: '请输入民族', trigger: 'blur' }
                     ],
-                    // gender: [
-                    //     { required: true, message: '请选择性别', trigger: 'blur' }
-                    // ],
+                    gender: [
+                        { required: true, message: '请选择性别', trigger: 'blur' }
+                    ],
                     postionYears: [
                         {required: true, message: '请输入岗位年限', trigger: 'blur'}
                     ],

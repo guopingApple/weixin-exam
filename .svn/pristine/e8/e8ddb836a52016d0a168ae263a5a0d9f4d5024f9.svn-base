@@ -32,41 +32,22 @@ footer{position:absolute;color: #1e74e1;font-size: 16/@r;left: 0;right: 0;bottom
     data(){
       return {
         id: this.$route.query.id, // 员工id
-        qrcode: this.$route.query.qrcode, // 员工编码
-        element: this.$route.query.element, // 员工登录信息
-        isShowInfo:true
+        qrcode: this.$route.query.qrcode // 员工编码
       }
     },
     mounted(){
-      // console.log('员工id----' + this.id)
-      // console.log('nation----' + this.element.nation)
+      console.log('员工id----' + this.id)
     },
     methods:{
-      isInfo(){
-          if (!this.element.company || !this.element.department || !this.element.position || !this.element.nation || !this.element.gender || !this.element.postionYears || !this.element.phone) {
-              this.isShowInfo = false
-          }else{
-              this.isShowInfo = true
-          }
-          console.log('isShowInfo----' + this.isShowInfo)
-      },
       enrol(){
         // console.log(localStorage.getItem("person"))
-        // that.$router.push({path: '/personInfo',query:{id:id,element:res.data.element}})
-        this.isInfo()
-        if(this.isShowInfo){
+        if(localStorage.getItem("person")){
           this.$router.push({'path':'/enrolList',query:{id:this.id}})
         }else{
-          this.$router.push({'path':'/personInfo',query:{id:this.id,element:this.element}})
+          this.$router.push({'path':'/personInfo'})
         }
       },
       survey(){
-        // this.isInfo()
-        // if(this.isShowInfo){
-        //   this.$router.push({'path':'/surveyList'})
-        // }else{
-        //   this.$router.push({'path':'/personInfo',query:{id:this.id,element:this.element}})
-        // }
         this.$notify({
           message: '该功能暂未开通',
           duration:2000,
@@ -74,19 +55,17 @@ footer{position:absolute;color: #1e74e1;font-size: 16/@r;left: 0;right: 0;bottom
         });
       },
       signin(){
-        this.isInfo()
-        if(this.isShowInfo){
+        if(localStorage.getItem("person")){
           this.$router.push({'path':'/signinList',query:{id:this.id,qrcode:this.qrcode}})
         }else{
-          this.$router.push({'path':'/personInfo',query:{id:this.id,element:this.element}})
+          this.$router.push({'path':'/personInfo'})
         }
       },
       exam(){
-        this.isInfo()
-        if(this.isShowInfo){
+        if(localStorage.getItem("person")){
           this.$router.push({'path':'/examList',query:{id:this.id}})
         }else{
-          this.$router.push({'path':'/personInfo',query:{id:this.id,element:this.element}})
+          this.$router.push({'path':'/personInfo'})
         }
       }
     }
